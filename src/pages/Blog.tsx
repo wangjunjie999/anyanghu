@@ -6,27 +6,25 @@ import { blogPosts } from "@/data/blogPosts";
 const Blog = () => {
   const [activeCategory, setActiveCategory] = useState("ALL");
   
-  const categories = ["ALL", "SUSTAINABILITY", "DESIGN", "URBAN PLANNING"];
-  
-  const filteredPosts = activeCategory === "ALL" 
-    ? blogPosts 
+  const categories = ["ALL", "基地动态", "橄榄油知识", "礼盒场景"];
+
+  const filteredPosts = activeCategory === "ALL"
+    ? blogPosts
     : blogPosts.filter(post => post.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
-      {/* Hero Section */}
+
       <section className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto">
             <div className="mb-12">
-              <h1 className="text-6xl md:text-8xl font-light text-architectural mb-8">
-                INSIGHTS
+              <h1 className="font-serif text-5xl md:text-7xl font-light text-architectural text-foreground mb-8">
+                品牌资讯
               </h1>
               <p className="text-xl text-muted-foreground max-w-3xl">
-                Exploring the intersection of architecture, design, and human experience 
-                through thoughtful analysis and contemporary perspectives.
+                安阳湖油橄榄基地动态、橄榄油知识与礼盒生活场景，带你了解一瓶好橄榄油背后的故事。
               </p>
             </div>
           </div>
@@ -116,24 +114,23 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-32 bg-muted">
+      <section className="py-32 bg-muted/40">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-light text-architectural mb-8">
-              Stay Informed
+            <h2 className="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground mb-8">
+              订阅安阳湖动态
             </h2>
             <p className="text-xl text-muted-foreground mb-12">
-              Subscribe to our newsletter for the latest insights on architecture and design
+              留下邮箱，第一时间获取基地动态、新品发布与礼盒优惠
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-              <input 
-                type="email" 
-                placeholder="Enter your email"
+              <input
+                type="email"
+                placeholder="请输入您的邮箱"
                 className="flex-1 px-6 py-4 bg-background border border-border text-foreground placeholder:text-muted-foreground"
               />
-              <button className="px-8 py-4 bg-foreground text-background hover:bg-muted-foreground transition-colors duration-300">
-                SUBSCRIBE
+              <button className="px-8 py-4 bg-primary text-primary-foreground text-sm tracking-widest hover:bg-primary/90 transition-colors duration-300">
+                订阅
               </button>
             </div>
           </div>
