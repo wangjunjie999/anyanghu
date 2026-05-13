@@ -58,6 +58,10 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      fontFamily: {
+        sans: ['"Noto Sans SC"', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['"Noto Serif SC"', 'Georgia', 'serif'],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
