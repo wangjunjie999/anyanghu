@@ -1,67 +1,72 @@
-import project1 from "@/assets/project-1.jpg";
-import project2 from "@/assets/project-2.jpg";
-import project3 from "@/assets/project-3.jpg";
+import gift1 from "@/assets/project-1.jpg";
+import olives from "@/assets/project-2.jpg";
+import workshop from "@/assets/project-3.jpg";
+
+const products = [
+  {
+    image: gift1,
+    title: "科拉蒂高端礼盒系列",
+    series: "PREMIUM GIFT BOX",
+    specs: ["规格：500ml × 2 / 1L × 2", "酸度：≤ 0.5%", "橄榄多酚：368.67 mg/kg", "品种：科拉蒂单品种橄榄果"],
+  },
+  {
+    image: olives,
+    title: "经典款礼盒系列",
+    series: "CLASSIC GIFT BOX",
+    specs: ["规格：500ml × 2 / 1L × 2", "酸度：≤ 0.5%", "品种：奇迹、皮瓜尔、皮削利、阿尔波萨纳混合"],
+  },
+  {
+    image: workshop,
+    title: "科拉蒂单品种橄榄油",
+    series: "SINGLE VARIETAL",
+    specs: ["科拉蒂单品种橄榄果冷榨", "保留高多酚天然营养", "适合凉拌、蘸面包、淋汤"],
+  },
+  {
+    image: gift1,
+    title: "特级初榨橄榄油瓶装系列",
+    series: "EVERYDAY EVOO",
+    specs: ["家庭日常用油", "低温物理冷榨", "自然清香 · 健康轻爽"],
+  },
+];
 
 const Portfolio = () => {
-  const projects = [
-    {
-      image: project1,
-      title: "MINIMAL RESIDENCE",
-      location: "NEW YORK, 2024",
-      description: "A contemporary home focusing on light, space, and material honesty"
-    },
-    {
-      image: project2,
-      title: "CORPORATE HEADQUARTERS",
-      location: "LONDON, 2023",
-      description: "Modern office space emphasizing collaboration and natural elements"
-    },
-    {
-      image: project3,
-      title: "CULTURAL CENTER",
-      location: "TOKYO, 2023",
-      description: "Public architecture that bridges tradition with contemporary design"
-    }
-  ];
-
   return (
-    <section id="work" className="py-32 bg-muted">
+    <section id="work" className="py-32 bg-background">
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
-            <h2 className="text-minimal text-muted-foreground mb-4">SELECTED WORK</h2>
-            <h3 className="text-4xl md:text-6xl font-light text-architectural">
-              Our Projects
+            <h2 className="text-minimal text-primary mb-4">PRODUCTS</h2>
+            <h3 className="font-serif text-4xl md:text-6xl font-light text-architectural text-foreground">
+              产品中心
             </h3>
+            <p className="mt-6 text-muted-foreground max-w-2xl">
+              从节日礼赠到日常餐桌，安阳湖为不同的生活场景提供合适的橄榄油选择。
+            </p>
           </div>
-          
-          <div className="space-y-32">
-            {projects.map((project, index) => (
-              <div key={index} className="group">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={project.image} 
-                    alt={project.title}
-                    className="w-full h-[70vh] object-cover transition-transform duration-700 group-hover:scale-105"
+
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-24">
+            {products.map((p, i) => (
+              <div key={i} className="group">
+                <div className="relative overflow-hidden bg-muted">
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    loading="lazy"
+                    className="w-full h-[55vh] object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
-                
-                <div className="mt-8 grid md:grid-cols-3 gap-8">
-                  <div>
-                    <h4 className="text-2xl font-light text-architectural mb-2">
-                      {project.title}
-                    </h4>
-                    <p className="text-minimal text-muted-foreground">
-                      {project.location}
-                    </p>
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {project.description}
-                    </p>
-                  </div>
+
+                <div className="mt-8 space-y-4">
+                  <p className="text-minimal text-primary">{p.series}</p>
+                  <h4 className="font-serif text-2xl md:text-3xl font-light text-architectural text-foreground">
+                    {p.title}
+                  </h4>
+                  <ul className="text-muted-foreground space-y-1 text-sm leading-relaxed">
+                    {p.specs.map((s) => (
+                      <li key={s}>· {s}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ))}
