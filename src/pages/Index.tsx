@@ -4,6 +4,8 @@ import Services from "@/components/Services";
 import About from "@/components/About";
 import Portfolio from "@/components/Portfolio";
 import Contact from "@/components/Contact";
+import heroImage from "@/assets/hero-architecture.jpg";
+import giftImage from "@/assets/project-1.jpg";
 
 const Index = () => {
   return (
@@ -13,6 +15,62 @@ const Index = () => {
       <Services />
       <About />
       <Portfolio />
+
+      {/* 礼盒定制 */}
+      <section id="gift" className="py-32 bg-muted/40">
+        <div className="container mx-auto px-6">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div className="relative overflow-hidden">
+              <img
+                src={giftImage}
+                alt="安阳湖橄榄油礼盒"
+                loading="lazy"
+                className="w-full h-[60vh] object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-minimal text-primary mb-4">GIFT CUSTOMIZATION</h2>
+              <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground mb-8">
+                一份能走进日常三餐的
+                <br />
+                健康好礼
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                适合节日送礼、走亲访友、敬献父母长辈、商务客户礼赠、企业福利及地方特色礼品。
+                我们提供包装定制、Logo 印制、定向团购等灵活方案，让一瓶橄榄油承载心意。
+              </p>
+              <a
+                href="/contact"
+                className="inline-flex items-center px-8 py-3 bg-primary text-primary-foreground text-sm tracking-widest hover:bg-primary/90 transition-colors duration-300"
+              >
+                咨询礼盒定制
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 产业园 / 文旅体验 */}
+      <section
+        className="relative py-40 bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
+        <div className="absolute inset-0 hero-overlay" />
+        <div className="relative container mx-auto px-6">
+          <div className="max-w-3xl text-background">
+            <p className="text-minimal text-accent mb-6">INDUSTRY · TOURISM · WELLNESS</p>
+            <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural mb-8">
+              油橄榄大健康产业园
+            </h3>
+            <p className="text-background/85 leading-relaxed text-lg">
+              现代化榨油体验车间、科研与研学馆、展示展销馆、农旅融合空间，
+              未来打造集种植、加工、文旅、康养于一体的产业融合示范园，
+              让一颗橄榄果的旅程被看见、被体验。
+            </p>
+          </div>
+        </div>
+      </section>
+
       <Contact />
     </div>
   );
