@@ -83,7 +83,7 @@ const BlogPost = () => {
                     .split('\n')
                     .map(line => {
                       if (line.startsWith('# ')) {
-                        return `<h1 class="text-3xl md:text-4xl font-light text-architectural mb-8 mt-12">${line.substring(2)}</h1>`;
+                        return `<h2 class="text-3xl md:text-4xl font-light text-architectural mb-8 mt-12">${line.substring(2)}</h2>`;
                       } else if (line.startsWith('## ')) {
                         return `<h2 class="text-2xl md:text-3xl font-light text-architectural mb-6 mt-10">${line.substring(3)}</h2>`;
                       } else if (line.startsWith('### ')) {

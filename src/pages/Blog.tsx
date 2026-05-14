@@ -124,8 +124,11 @@ const Blog = () => {
               留下邮箱，第一时间获取基地动态、新品发布与礼盒优惠
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+              <label htmlFor="newsletter-email" className="sr-only">邮箱地址</label>
               <input
+                id="newsletter-email"
                 type="email"
+                aria-label="邮箱地址"
                 placeholder="请输入您的邮箱"
                 className="flex-1 px-6 py-4 bg-background border border-border text-foreground placeholder:text-muted-foreground"
               />

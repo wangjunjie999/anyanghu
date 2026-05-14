@@ -128,9 +128,9 @@ const Work = () => {
 
                   <div className="space-y-5">
                     <div>
-                      <h3 className="font-serif text-2xl lg:text-3xl font-light text-architectural text-foreground mb-2">
+                      <h2 className="font-serif text-2xl lg:text-3xl font-light text-architectural text-foreground mb-2">
                         {p.title}
-                      </h3>
+                      </h2>
                       <p className="text-minimal text-muted-foreground">{p.location}</p>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">{p.description}</p>
