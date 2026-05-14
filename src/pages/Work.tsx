@@ -90,6 +90,19 @@ const Work = () => {
         </div>
       </section>
 
+      <section className="pb-12">
+        <div className="relative h-[380px] md:h-[600px] w-full">
+          <CircularGallery
+            items={products.map((p) => ({ image: p.image, text: p.title }))}
+            bend={3}
+            textColor="hsl(38 25% 22%)"
+            borderRadius={0.05}
+            scrollEase={0.04}
+            font="500 22px 'Noto Serif SC', serif"
+          />
+        </div>
+      </section>
+
       <section className="pb-16">
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto">
