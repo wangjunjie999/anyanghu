@@ -1,8 +1,10 @@
-import { forwardRef, useMemo, useRef, useEffect, MutableRefObject, CSSProperties, HTMLAttributes } from 'react';
+import { forwardRef, useMemo, useRef, useEffect, useState, MutableRefObject, CSSProperties, HTMLAttributes } from 'react';
 import { motion } from 'motion/react';
 
-function useAnimationFrame(callback: () => void) {
+/** Pausable RAF loop: only runs when active=true */
+function usePausableAnimationFrame(callback: () => void, active: boolean) {
   useEffect(() => {
+    if (!active) return;
     let frameId: number;
     const loop = () => {
       callback();
@@ -10,33 +12,63 @@ function useAnimationFrame(callback: () => void) {
     };
     frameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frameId);
-  }, [callback]);
+  }, [callback, active]);
 }
 
-function useMousePositionRef(containerRef: MutableRefObject<HTMLElement | null>) {
-  const positionRef = useRef({ x: 0, y: 0 });
+/** Tracks pointer position + whether it has moved recently. */
+function usePointerActivity(
+  containerRef: MutableRefObject<HTMLElement | null>,
+  idleMs = 180,
+  onMove?: () => void
+) {
+  const positionRef = useRef({ x: -9999, y: -9999 });
+  const [isMoving, setIsMoving] = useState(false);
+
   useEffect(() => {
-    const updatePosition = (x: number, y: number) => {
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    const update = (x: number, y: number) => {
       if (containerRef?.current) {
         const rect = containerRef.current.getBoundingClientRect();
         positionRef.current = { x: x - rect.left, y: y - rect.top };
       } else {
         positionRef.current = { x, y };
       }
+      setIsMoving(true);
+      onMove?.();
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => setIsMoving(false), idleMs);
     };
-    const handleMouseMove = (ev: MouseEvent) => updatePosition(ev.clientX, ev.clientY);
-    const handleTouchMove = (ev: TouchEvent) => {
-      const touch = ev.touches[0];
-      updatePosition(touch.clientX, touch.clientY);
+    const onMouseMove = (e: MouseEvent) => update(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (t) update(t.clientX, t.clientY);
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchmove', onTouchMove);
+      if (idleTimer) clearTimeout(idleTimer);
     };
+  }, [containerRef, idleMs, onMove]);
+
+  return { positionRef, isMoving };
+}
+
+/** Track whether the container is in viewport */
+function useInView(containerRef: MutableRefObject<HTMLElement | null>) {
+  const [inView, setInView] = useState(true);
+  useEffect(() => {
+    const node = containerRef?.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '100px' }
+    );
+    io.observe(node);
+    return () => io.disconnect();
   }, [containerRef]);
-  return positionRef;
+  return inView;
 }
 
 interface VariableProximityProps extends HTMLAttributes<HTMLSpanElement> {
@@ -67,8 +99,21 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
 
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const interpolatedSettingsRef = useRef<string[]>([]);
-  const mousePositionRef = useMousePositionRef(containerRef);
-  const lastPositionRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
+
+  // Detect coarse pointer (touch / no hover) — render static for perf and a sensible mobile look.
+  const [isCoarse, setIsCoarse] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(hover: none), (pointer: coarse)');
+    const update = () => setIsCoarse(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+
+  const { positionRef, isMoving } = usePointerActivity(containerRef, 180);
+  const inView = useInView(containerRef);
+  const active = !isCoarse && isMoving && inView;
 
   const parsedSettings = useMemo(() => {
     const parseSettings = (settingsStr: string) =>
@@ -86,9 +131,18 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     return Array.from(fromSettings.entries()).map(([axis, fromValue]) => ({
       axis,
       fromValue,
-      toValue: toSettings.get(axis) ?? fromValue
+      toValue: toSettings.get(axis) ?? fromValue,
     }));
   }, [fromFontVariationSettings, toFontVariationSettings]);
+
+  // Static "mid weight" fallback for coarse pointers (mobile look).
+  const midSettings = useMemo(
+    () =>
+      parsedSettings
+        .map(({ axis, fromValue, toValue }) => `'${axis}' ${(fromValue + toValue) / 2}`)
+        .join(', '),
+    [parsedSettings]
+  );
 
   const calculateDistance = (x1: number, y1: number, x2: number, y2: number) =>
     Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
@@ -106,40 +160,42 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     }
   };
 
-  useAnimationFrame(() => {
-    if (!containerRef?.current) return;
-    const { x, y } = mousePositionRef.current;
-    if (lastPositionRef.current.x === x && lastPositionRef.current.y === y) {
-      return;
-    }
-    lastPositionRef.current = { x, y };
-    const containerRect = containerRef.current.getBoundingClientRect();
-    letterRefs.current.forEach((letterRef, index) => {
-      if (!letterRef) return;
-      const rect = letterRef.getBoundingClientRect();
-      const letterCenterX = rect.left + rect.width / 2 - containerRect.left;
-      const letterCenterY = rect.top + rect.height / 2 - containerRect.top;
-      const distance = calculateDistance(
-        mousePositionRef.current.x,
-        mousePositionRef.current.y,
-        letterCenterX,
-        letterCenterY
-      );
-      if (distance >= radius) {
-        letterRef.style.fontVariationSettings = fromFontVariationSettings;
-        return;
-      }
-      const falloffValue = calculateFalloff(distance);
-      const newSettings = parsedSettings
-        .map(({ axis, fromValue, toValue }) => {
-          const interpolatedValue = fromValue + (toValue - fromValue) * falloffValue;
-          return `'${axis}' ${interpolatedValue}`;
-        })
-        .join(', ');
-      interpolatedSettingsRef.current[index] = newSettings;
-      letterRef.style.fontVariationSettings = newSettings;
+  const tick = useMemo(
+    () => () => {
+      if (!containerRef?.current) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const { x, y } = positionRef.current;
+      letterRefs.current.forEach((letterRef, index) => {
+        if (!letterRef) return;
+        const rect = letterRef.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2 - containerRect.left;
+        const cy = rect.top + rect.height / 2 - containerRect.top;
+        const distance = calculateDistance(x, y, cx, cy);
+        if (distance >= radius) {
+          letterRef.style.fontVariationSettings = fromFontVariationSettings;
+          return;
+        }
+        const f = calculateFalloff(distance);
+        const newSettings = parsedSettings
+          .map(({ axis, fromValue, toValue }) => `'${axis}' ${fromValue + (toValue - fromValue) * f}`)
+          .join(', ');
+        interpolatedSettingsRef.current[index] = newSettings;
+        letterRef.style.fontVariationSettings = newSettings;
+      });
+    },
+    [containerRef, positionRef, parsedSettings, radius, fromFontVariationSettings]
+  );
+
+  usePausableAnimationFrame(tick, active);
+
+  // When loop pauses, reset every letter to "from" so we don't leave it stuck mid-interpolation.
+  useEffect(() => {
+    if (active) return;
+    const target = isCoarse ? midSettings : fromFontVariationSettings;
+    letterRefs.current.forEach(el => {
+      if (el) el.style.fontVariationSettings = target;
     });
-  });
+  }, [active, isCoarse, midSettings, fromFontVariationSettings]);
 
   const words = label.split(' ');
   let letterIndex = 0;
@@ -151,7 +207,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
       style={{
         display: 'inline',
         fontFamily: '"Roboto Flex", sans-serif',
-        ...style
+        ...style,
       }}
       className={className}
       {...restProps}
@@ -168,7 +224,9 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
                 }}
                 style={{
                   display: 'inline-block',
-                  fontVariationSettings: interpolatedSettingsRef.current[currentLetterIndex]
+                  fontVariationSettings:
+                    interpolatedSettingsRef.current[currentLetterIndex] ??
+                    (isCoarse ? midSettings : fromFontVariationSettings),
                 }}
                 aria-hidden="true"
               >
