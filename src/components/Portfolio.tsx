@@ -36,15 +36,19 @@ const products = [
 
 const Portfolio = () => {
   const { theme } = useTheme();
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
   useEffect(() => {
     const update = () => setIsDark(document.documentElement.classList.contains("dark"));
     update();
     const obs = new MutationObserver(update);
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", update);
+    return () => { obs.disconnect(); mq.removeEventListener("change", update); };
   }, [theme]);
-  const galleryTextColor = isDark ? "hsl(40 25% 92%)" : "hsl(38 25% 22%)";
+  const galleryTextColor = isDark ? "hsl(40 30% 95%)" : "hsl(38 25% 22%)";
   return (
     <section id="work" className="py-32 bg-background">
       <div className="container mx-auto px-6">
