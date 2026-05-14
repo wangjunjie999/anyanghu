@@ -1,4 +1,5 @@
 import Reveal from "@/components/Reveal";
+import ScrollFloat from "@/components/ScrollFloat";
 import GradualBlur from "@/components/GradualBlur";
 import waterImg from "@/assets/region-water.jpg";
 import climateImg from "@/assets/region-climate.jpg";
