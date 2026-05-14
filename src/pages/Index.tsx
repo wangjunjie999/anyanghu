@@ -4,12 +4,41 @@ import Services from "@/components/Services";
 import About from "@/components/About";
 import Portfolio from "@/components/Portfolio";
 import Contact from "@/components/Contact";
+import SEO from "@/components/SEO";
 import heroImage from "@/assets/hero-architecture.jpg";
 import giftImage from "@/assets/project-1.jpg";
 
 const Index = () => {
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "十堰泽盟农业开发有限公司",
+      alternateName: "安阳湖橄榄油",
+      url: "https://anyanghu.lovable.app",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "十堰市郧阳区",
+        addressRegion: "湖北省",
+        addressCountry: "CN",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "安阳湖橄榄油",
+      url: "https://anyanghu.lovable.app",
+    },
+  ];
+
   return (
     <div className="min-h-screen">
+      <SEO
+        title="安阳湖橄榄油 — 湖北十堰特级初榨橄榄油"
+        description="安阳湖橄榄油，源自湖北十堰郧阳安阳湖油橄榄基地，低温物理冷榨特级初榨橄榄油，提供精品礼盒、团购合作与招商咨询。"
+        path="/"
+        jsonLd={jsonLd}
+      />
       <Navigation />
       <Hero />
       <Services />
