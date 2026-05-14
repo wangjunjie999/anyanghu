@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navigation from "@/components/Navigation";
 import SEO from "@/components/SEO";
 import CircularGallery from "@/components/CircularGallery";
+import { useTheme } from "@/components/ThemeProvider";
 import gift from "@/assets/project-1.jpg";
 import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
 
 const Work = () => {
   const [activeCategory, setActiveCategory] = useState("全部");
+  const { theme } = useTheme();
+  const [isDark, setIsDark] = useState(
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
+  useEffect(() => {
+    const update = () => setIsDark(document.documentElement.classList.contains("dark"));
+    update();
+    const obs = new MutationObserver(update);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", update);
+    return () => { obs.disconnect(); mq.removeEventListener("change", update); };
+  }, [theme]);
+  const galleryTextColor = isDark ? "hsl(40 30% 95%)" : "hsl(38 25% 22%)";
   const products = [
     {
       image: gift,
