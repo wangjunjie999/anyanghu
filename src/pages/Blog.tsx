@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import { blogPosts } from "@/data/blogPosts";
 
 const Blog = () => {
@@ -14,6 +15,11 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="品牌资讯 · 安阳湖橄榄油基地动态与橄榄油知识"
+        description="走进安阳湖油橄榄基地：种植采摘、低温冷榨、橄榄油烹饪知识、礼盒场景与品牌新动态。"
+        path="/blog"
+      />
       <Navigation />
 
       <section className="pt-32 pb-20">

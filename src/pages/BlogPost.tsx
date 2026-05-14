@@ -29,8 +29,25 @@ const BlogPost = () => {
     );
   }
 
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    author: { "@type": "Organization", name: post.author },
+    datePublished: post.date,
+    image: `https://anyanghu.lovable.app${post.image}`,
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${post.title} · 安阳湖橄榄油`}
+        description={post.excerpt}
+        path={`/blog/${post.id}`}
+        ogType="article"
+        jsonLd={articleLd}
+      />
       <Navigation />
       
       {/* Article Header */}
