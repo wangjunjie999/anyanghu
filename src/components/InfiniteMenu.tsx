@@ -1101,8 +1101,6 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
     if (!activeItem?.link) return;
     if (activeItem.link.startsWith('http')) {
       window.open(activeItem.link, '_blank');
-    } else {
-      console.log('Internal route:', activeItem.link);
     }
   };
 
@@ -1111,6 +1109,8 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
       <canvas
         id="infinite-grid-menu-canvas"
         ref={canvasRef}
+        role="img"
+        aria-label="品质工艺 7 步流程交互式球体"
         className="cursor-grab w-full h-full overflow-hidden relative outline-none active:cursor-grabbing"
       />
 
@@ -1120,13 +1120,14 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
             className={`
           select-none
           absolute
-          font-black
-          [font-size:4rem]
-          left-[1.6em]
-          top-1/2
-          transform
-          translate-x-[20%]
-          -translate-y-1/2
+          font-serif
+          font-light
+          text-foreground
+          text-[2rem] md:text-[2.75rem]
+          leading-tight
+          left-6 md:left-10
+          top-6 md:top-10
+          max-w-[10ch]
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           ${
@@ -1143,48 +1144,24 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
             className={`
           select-none
           absolute
-          max-w-[10ch]
-          text-[1.5rem]
-          top-1/2
-          right-[1%]
+          max-w-[22ch] md:max-w-[26ch]
+          text-sm md:text-base
+          leading-relaxed
+          text-muted-foreground
+          bottom-6 md:bottom-10
+          right-6 md:right-10
+          text-right
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           ${
             isMoving
-              ? 'opacity-0 pointer-events-none duration-[100ms] translate-x-[-60%] -translate-y-1/2'
-              : 'opacity-100 pointer-events-auto duration-[500ms] translate-x-[-90%] -translate-y-1/2'
+              ? 'opacity-0 pointer-events-none duration-[100ms] translate-y-2'
+              : 'opacity-100 pointer-events-auto duration-[500ms] translate-y-0'
           }
         `}
           >
             {activeItem.description}
           </p>
-
-          <div
-            onClick={handleButtonClick}
-            className={`
-          absolute
-          left-1/2
-          z-10
-          w-[60px]
-          h-[60px]
-          grid
-          place-items-center
-          bg-[#00ffff]
-          border-[5px]
-          border-black
-          rounded-full
-          cursor-pointer
-          transition-all
-          ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
-          ${
-            isMoving
-              ? 'bottom-[-80px] opacity-0 pointer-events-none duration-[100ms] scale-0 -translate-x-1/2'
-              : 'bottom-[3.8em] opacity-100 pointer-events-auto duration-[500ms] scale-100 -translate-x-1/2'
-          }
-        `}
-          >
-            <p className="select-none relative text-[#120F17] top-[2px] text-[26px]">&#x2197;</p>
-          </div>
         </>
       )}
     </div>
