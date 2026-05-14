@@ -32,7 +32,7 @@ const Services = () => {
       number: "04",
       title: "好管理",
       label: "MANAGEMENT",
-      description: "从种植、采摘、运输、冷榨到品质检测，全流程可追溯的标准化品质管理。",
+      description: "省级林业龙头与国家高新技术企业认证，建立单批次溯源与第三方品控体系，让每一瓶都有据可查。",
       image: managementImg,
     },
   ];
