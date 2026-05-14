@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import { blogPosts } from "@/data/blogPosts";
 
 const BlogPost = () => {
