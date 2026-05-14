@@ -1,53 +1,91 @@
-## 评估结论
+## 评估
 
-可以用，且很适合。`GradualBlur` 是纯视觉的渐变模糊蒙层组件，无业务逻辑、无样式污染、依赖只是 React 本身（你给的 `mathjs` 实际并未在源码里用到，可以不装）。和我们米白 / 橄榄绿、简约高级感的品牌调性兼容：用在 Hero 底部、产品大图底部、产业园背景区底部，作为「内容向下渐隐」的过渡，比硬切要干净，也呼应你视频里那种「上下滚动 + 渐入渐出」的呼吸感。
+三个诉求都可以做，且互相独立、不会破坏现有布局：
 
-配合再加一层基于 IntersectionObserver 的「滚入旋转 + 渐入」轻动画（橄榄果图标轻微旋转、产品图淡入上移），即可达到你说的「旋转 + 渐入渐出」效果，且不会花哨。
+1. **回滚收回动画**：现在 `Reveal.tsx` 是「触发一次就停」（once-only IntersectionObserver）。改成双向：进入视口播入场动画，离开视口反向收回。属于 `Reveal` 内部改造，所有调用点零修改。
+2. **倒油动画（产品出现时）**：在 `Portfolio.tsx` 每张产品图卡片上叠一层 SVG/CSS 的「金色油液从瓶口流下、注入、形成油面」过场。只在卡片首次进入视口时播放一次（避免反复打扰），动画结束后元素 `display:none` 不影响交互。纯 CSS + SVG `clip-path` + 渐变，不引第三方库。
+3. **CircularGallery 产品横向弧形轮播**：用作产品中心的「精选产品横向展示」入口区，作为现有 4 张产品卡片网格之上的一个 hero 级展示带（不替换原有网格，原网格保留作为详细规格区）。需要装 `ogl` 依赖。
 
 ---
 
 ## 实施计划
 
-### 1. 新增组件
-- `src/components/GradualBlur.tsx`：照搬你贴的源码（TS + Tailwind 版），去掉未使用的 `mathjs`，不装新依赖。
-- `src/components/Reveal.tsx`：极简包装，基于 `IntersectionObserver`，提供三种入场：
-  - `fade-up`（默认，渐入 + 上移）
-  - `fade-rotate`（渐入 + 轻微旋转 -6° → 0°，用于橄榄果 / 瓶身图）
-  - `fade-scale`（渐入 + 0.96 → 1，用于礼盒卡片）
-  
-  动画时长 700–900ms，`cubic-bezier(0.16,1,0.3,1)`，只触发一次，`prefers-reduced-motion` 下禁用。
+### 1. 改造 `src/components/Reveal.tsx` —— 支持双向
 
-### 2. 在 `tailwind.config.ts` 增补 keyframes
-新增 `fade-up`、`fade-rotate`、`fade-scale` 三个动画（已有 `fade-in-up`、`scale-in`，复用并补一个旋转版即可）。不改色板、不改字体。
+- 新增 prop：`bidirectional?: boolean`（默认 `true`，符合用户「回滚也有收回」的要求）。
+- IntersectionObserver 不再 `unobserve`，监听 `isIntersecting`：true → 加 `is-visible`，false → 移除。
+- 保持 `prefers-reduced-motion` 下静态显示。
+- 动画时长 / 缓动不变（700–900ms，`cubic-bezier(0.16,1,0.3,1)`），所以反向收回也是同一条曲线，观感对称。
+- 调用点 0 修改（Hero / Services / About / Portfolio / Index 全部沿用）。
 
-### 3. 应用位置（克制使用，全站不超过 4 处模糊 + 关键区块入场动画）
+### 2. 新增 `src/components/PourOilReveal.tsx` —— 倒油过场
 
-| 位置 | 动画 | 目的 |
-|---|---|---|
-| `Hero.tsx` 底部 | `<GradualBlur position="bottom" height="8rem" strength={2} curve="bezier" />` | 大图向下文字区平滑过渡，呼应视频底部渐隐 |
-| `Hero.tsx` 标题/副标题 | 已有 `.reveal`，保留 | — |
-| `Services.tsx` 4 张「产地优势」卡片 | `Reveal variant="fade-up"`，`stagger` 100ms | 滚入呼吸感 |
-| `About.tsx` 7 步工艺流程节点 | `Reveal variant="fade-rotate"` | 轻微旋转入场，体现「果实 → 瓶」的过程感 |
-| `Portfolio.tsx` 产品图 | `Reveal variant="fade-scale"` + 卡片底部 `<GradualBlur position="bottom" height="3rem" strength={1.2} />` 仅在大图卡片上 | 产品图更精致；底部模糊让规格文字浮现更柔和 |
-| `Index.tsx` 礼盒区图片 | `Reveal variant="fade-scale"` | — |
-| `Index.tsx` 产业园背景区 | `<GradualBlur position="bottom" height="6rem" strength={2} animated="scroll" />` | 大背景图向下一个区块的过渡 |
-| `Contact.tsx` | 不加动画 | 表单区保持冷静 |
+包装单张产品图，结构：
+
+```text
+<div class="relative">
+  <img ... />                 // 原产品图，初始 opacity:0
+  <PourOverlay />             // 绝对定位覆盖层
+</div>
+```
+
+`PourOverlay` 由三层组成（纯 CSS + SVG）：
+
+- **油柱**：一根 6px 宽的金橄榄色（`hsl(45 70% 55%)` → `hsl(38 60% 45%)` 渐变）竖向 SVG path，从顶部 `scaleY:0` 向下 `scaleY:1` 拉伸（0–500ms）。
+- **油面上涨**：底部一块带 `clip-path: polygon(...)` 的金色半透明矩形，`top` 从 100% → 0%（500–1400ms），表面用 `border-radius` + 轻微 `wave` keyframe 模拟液面波动。
+- **产品图浮现**：油面到达顶部后（1200–1600ms）产品图 `opacity 0 → 1`，油层 `opacity → 0` 淡出。
+
+控制：用 `IntersectionObserver` 触发一次，加一个 `data-played` 标记，避免双向滚动反复播。`prefers-reduced-motion` 下直接 `opacity:1` 跳过整个过场。
+
+应用位置：`Portfolio.tsx` 4 张产品卡片，把现有 `<Reveal variant="fade-scale">` 内的 `<img>` 换成 `<PourOilReveal src={...} alt={...} />`。底部 `GradualBlur` 保留。
+
+### 3. 集成 `CircularGallery`
+
+- 新增 `src/components/CircularGallery.tsx`：照搬用户给的源码，TS + Tailwind 版本，依赖 `ogl`。
+- 安装：`bun add ogl`（不装 `mathjs`，源码未使用）。
+- 在 `Portfolio.tsx` 的标题区下方、产品网格上方插入一个全宽展示带：
+
+```tsx
+<div className="h-[600px] relative mb-24 -mx-6">
+  <CircularGallery
+    items={[
+      { image: gift1, text: '科拉蒂高端礼盒' },
+      { image: olives, text: '经典款礼盒' },
+      { image: workshop, text: '科拉蒂单品种' },
+      { image: gift1, text: '日常瓶装' },
+      // 复用现有素材，4–6 项即可
+    ]}
+    bend={3}
+    textColor="hsl(38 25% 25%)"   // 用品牌橄榄棕，不用纯白
+    borderRadius={0.05}
+    scrollEase={0.02}
+    font="500 22px 'Noto Serif SC', serif"
+  />
+</div>
+```
+
+- 用品牌色字体（橄榄棕），不用默认白；让它和米白背景协调。
+- `Work.tsx`（`/work` 路由）也复用同一个 `CircularGallery`，作为页面顶部 hero 下的产品轮播。
 
 ### 4. 性能与可达性
-- `GradualBlur` 只在桌面渲染全部 `divCount={5}`，移动端通过 `responsive` + `mobileHeight` 降到 `divCount={3}` 等价（直接传更小的 strength/height）。
-- 所有 `Reveal` 在 `prefers-reduced-motion: reduce` 时直接 opacity:1 静态显示。
-- 不改路由、不改 SEO、不动 `Helmet`。
+
+- `CircularGallery` 全局监听 `wheel` 会拦截滚动手感，给容器加上一个 `pointer-events` 隔离方案 —— 监听只在 hover 容器内时才 preventDefault；或者保留默认行为（库本身不 preventDefault，只读取 deltaY，OK）。先不改，观察。
+- 移动端：CircularGallery 高度从 600px 降到 380px（`h-[380px] md:h-[600px]`）。
+- `PourOilReveal` 在移动端缩短动画时长到 900ms，避免长时间挡住产品图。
+- `prefers-reduced-motion: reduce` 下：双向 Reveal、倒油过场全部禁用；CircularGallery 仍可手动拖拽，但取消自动惯性动画（保持基础静态显示）。
 
 ### 5. 不做的事
-- 不引入 framer-motion / GSAP（避免体积膨胀，纯 CSS + IO 足够）。
-- 不安装 `mathjs`（源码未使用）。
-- 不改全局色 / 字体 / 布局结构。
-- 不在 Header、Footer、Form 上加动画。
+
+- 不引 framer-motion / GSAP。
+- 不改色板 / 字体 / 路由 / SEO。
+- 不替换现有产品网格，CircularGallery 是补充展示带。
+- 不改 Header / Footer / Form。
 
 ---
 
-### 改动文件清单
-- 新增：`src/components/GradualBlur.tsx`、`src/components/Reveal.tsx`
-- 编辑：`tailwind.config.ts`（补 1 个 keyframe）、`src/components/Hero.tsx`、`src/components/Services.tsx`、`src/components/About.tsx`、`src/components/Portfolio.tsx`、`src/components/Contact.tsx`（不动）、`src/pages/Index.tsx`
+## 改动文件清单
 
-预计代码改动量小，视觉提升明显，且符合「简约不花哨」的要求。
+- 新增：`src/components/PourOilReveal.tsx`、`src/components/CircularGallery.tsx`
+- 编辑：`src/components/Reveal.tsx`（双向）、`src/components/Portfolio.tsx`（接入 CircularGallery + PourOilReveal）、`src/pages/Work.tsx`（顶部加 CircularGallery）、`package.json`（加 `ogl`）
+
+预计工作量：中等。视觉冲击点集中在「产品区」，符合「凸显产品特色」诉求；其余区块只是滚动收回更顺滑，不打扰阅读。
