@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import SEO from "@/components/SEO";
+import CircularGallery from "@/components/CircularGallery";
 import gift from "@/assets/project-1.jpg";
 import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
