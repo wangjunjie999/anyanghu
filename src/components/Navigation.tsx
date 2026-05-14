@@ -51,17 +51,17 @@ const Navigation = () => {
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden bg-background border-b border-border">
+        <div className="md:hidden bg-background border-b border-border animate-fade-in">
           <div className="container mx-auto px-6 py-6 space-y-4">
-            {navLinks.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="block text-sm tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300"
-              >
-                {l.label}
-              </a>
-            ))}
+            <GooeyNav
+              key={`mobile-${activeIndex}`}
+              items={navLinks}
+              initialActiveIndex={activeIndex}
+              particleCount={12}
+              animationTime={600}
+              vertical
+              onItemClick={() => setIsMenuOpen(false)}
+            />
             <div className="pt-4 border-t border-border">
               <ThemeToggle />
             </div>
