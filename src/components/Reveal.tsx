@@ -10,6 +10,7 @@ interface RevealProps {
   as?: ElementType;
   className?: string;
   threshold?: number;
+  bidirectional?: boolean;
 }
 
 const initialClass: Record<Variant, string> = {
