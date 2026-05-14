@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 const Services = () => {
   const advantages = [
     {
@@ -38,8 +40,8 @@ const Services = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-x-20 gap-y-16">
-            {advantages.map((s) => (
-              <div key={s.number} className="group">
+            {advantages.map((s, i) => (
+              <Reveal key={s.number} variant="fade-up" delay={i * 100} className="group">
                 <div className="flex items-start space-x-6">
                   <span className="text-minimal text-primary font-medium">{s.number}</span>
                   <div>
@@ -49,7 +51,7 @@ const Services = () => {
                     <p className="text-muted-foreground leading-relaxed">{s.description}</p>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>

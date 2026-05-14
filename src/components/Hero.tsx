@@ -1,4 +1,5 @@
 import heroImage from "@/assets/hero-architecture.jpg";
+import GradualBlur from "@/components/GradualBlur";
 
 const Hero = () => {
   return (
@@ -43,10 +44,12 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 reveal-delayed">
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 reveal-delayed z-20">
         <div className="w-px h-16 bg-background/40 mx-auto" />
         <div className="text-minimal text-background/60 mt-4">SCROLL</div>
       </div>
+
+      <GradualBlur position="bottom" height="8rem" strength={2} divCount={6} curve="bezier" zIndex={5} />
     </section>
   );
 };

@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 const About = () => {
   const craft = [
     "油橄榄种植",
@@ -38,10 +40,10 @@ const About = () => {
                 <h4 className="text-minimal text-primary mb-6">品质工艺</h4>
                 <ol className="space-y-4">
                   {craft.map((step, i) => (
-                    <li key={step} className="flex items-baseline gap-4 border-l-2 border-primary/40 pl-6">
+                    <Reveal as="li" key={step} variant="fade-rotate" delay={i * 80} className="flex items-baseline gap-4 border-l-2 border-primary/40 pl-6">
                       <span className="text-minimal text-primary w-8">{String(i + 1).padStart(2, "0")}</span>
                       <span className="text-foreground text-lg font-light">{step}</span>
-                    </li>
+                    </Reveal>
                   ))}
                 </ol>
               </div>
