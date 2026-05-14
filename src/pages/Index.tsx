@@ -76,7 +76,7 @@ const Index = () => {
               >
                 咨询礼盒定制
               </a>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -100,6 +100,7 @@ const Index = () => {
             </p>
           </div>
         </div>
+        <GradualBlur position="bottom" height="6rem" strength={2} divCount={5} curve="bezier" animated="scroll" zIndex={5} />
       </section>
 
       <Contact />
