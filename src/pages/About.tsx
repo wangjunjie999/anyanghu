@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import ScrollFloat from "@/components/ScrollFloat";
 import About from "@/components/About";
 import SEO from "@/components/SEO";
 
@@ -18,9 +19,15 @@ const AboutPage = () => {
           <div className="container mx-auto px-6">
             <div className="max-w-5xl mx-auto">
               <h2 className="text-minimal text-primary mb-4">HONORS</h2>
-              <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground mb-12">
+              <ScrollFloat
+                containerClassName="my-0 mb-12"
+                textClassName="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground"
+                stagger={0.04}
+                scrollStart="top bottom-=10%"
+                scrollEnd="bottom center"
+              >
                 荣誉与资质
-              </h3>
+              </ScrollFloat>
               <div className="grid md:grid-cols-2 gap-10 text-muted-foreground leading-relaxed">
                 <p>湖北省林业产业化省级重点龙头企业</p>
                 <p>国家高新技术企业</p>
