@@ -1,52 +1,55 @@
-## 修复 4 个问题
+## 问题诊断
 
-### 1. 内容重复：产地优势 vs 品牌故事
-当前重复点：
-- `Services.tsx`「04 · 好管理」描述里讲了"种植、采摘、运输、冷榨到品质检测全流程"——已经是工艺流程
-- `About.tsx` 右上信息卡里又出现「工艺标准 · 8 小时低温冷榨」
-- 下方 CRAFTSMANSHIP 球体本身就是完整 7 步工艺
+从最新截图看，球体区域仍然是一整块纯黑色——之前做的渐变舞台、羽化遮罩、文字描边全部"被盖住了"，根因不是样式问题，而是 WebGL canvas 自身就是不透明黑底。
 
-调整：
-- **`About.tsx` 右上信息卡**：把「工艺标准」格替换为「核心产品 · 特级初榨橄榄油」（避免和下面球体重复）
-- **`Services.tsx` 04 项**：标题保留「好管理」，描述改为聚焦"标准化追溯 + 省级龙头/国高新认证体系"，不再罗列工艺步骤；工艺细节交给品牌故事页的球体
-- 这样：产地优势 = 风土与体系；品牌故事 = 企业 + 7 步工艺探索，职责分明
+### 根因
+`src/components/InfiniteMenu.tsx` 第 759–761 行：
+```ts
+const gl = this.canvas.getContext('webgl2', {
+  alpha: false,      // ← 关键：canvas 强制不透明
+});
+```
+当 `alpha: false` 时，浏览器会忽略 `gl.clearColor(0,0,0,0)`，把整个 canvas 渲染成不透明黑色。所以：
+- 容器底下的 `linear-gradient` / `radial-gradient` 完全被遮住
+- `mask-image` 羽化的是黑块本身，所以四角能看到下层渐变（截图里左上、右上、左下、右下露出的小弧形就是被遮罩切出的边缘）
+- 文字 drop-shadow 在纯黑底上几乎不发光
 
-### 2. 暗色模式下 Hero / 产业园文字看不见
-根因：`Hero.tsx` 与 `Index.tsx`「油橄榄大健康产业园」段都用 `text-background` / `text-background/85` 着色。`--background` 在暗色模式 = 深墨绿 `120 25% 8%`，覆盖在墨绿背景图上几乎不可见（用户截图正是这种状态）。
+### 连带问题
+1. 标题 "油橄榄种植" 在黑底上偏暗绿（`text-foreground` = 深墨绿），对比度差
+2. 描述文字在右下黑底上同样难辨识
+3. 整个块视觉上仍像"贴上去的盒子"
 
-方案：这些文字永远叠在深色图片之上，应固定为浅色，不随主题翻转。
-- 在 `index.css` 新增固定 token：`--hero-foreground: 40 25% 94%;`（亮/暗模式同值），并加上 Tailwind `text-hero-foreground` 工具
-- 或简单方案：把 `Hero.tsx` 与「产业园」section 中的 `text-background*` 全部替换为 `text-[hsl(40_25%_94%)]` / `text-[hsl(40_25%_94%/0.85)]`
-- 同步 SCROLL 指示线、按钮边框 `border-background/60` 也改成同一固定浅色
+## 解决方案
 
-### 3. 球体区域"一块黑色突兀地粘上去"
-问题：当前 `border-y border-border/40` + 一个小范围径向渐变在视觉上仍像一个独立卡片，且球体几何阴影聚集在中心让那一块显黑。
+### 1. 让 WebGL canvas 真正透明（核心修复，1 行）
+`InfiniteMenu.tsx` 第 759–762 行：
+```ts
+const gl = this.canvas.getContext('webgl2', {
+  antialias: true,
+  alpha: true,                 // 改 false → true
+  premultipliedAlpha: false,   // 新增，避免半透明边缘出现深色描边
+});
+```
+同时确认 `gl.clearColor(0,0,0,0)` 之前调用 `gl.enable(gl.BLEND)` + `gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)`（如已存在则保持）。
 
-方案——做成自然融入页面的渐变舞台：
-- 删掉 `border-y` 硬边
-- 把容器装饰层改为**多层叠加的纵向渐变**，让上下两端无缝融入 `bg-muted/40`：
-  ```
-  bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary)/0.06)_30%,hsl(var(--accent)/0.10)_55%,hsl(var(--primary)/0.06)_75%,transparent_100%)]
-  ```
-- 叠加一个柔和径向高光：`radial-gradient(ellipse_60%_50%_at_center,hsl(var(--accent)/0.12),transparent_70%)`
-- 容器高度区域用上下各 `mask-image: linear-gradient(180deg,transparent,black 12%,black 88%,transparent)` 让边界羽化
-- 暗模式自动跟随（accent/primary 都是主题色）
+修复后效果：
+- 球体之外区域完全透明，露出我们做的纵向 + 径向双层渐变
+- 上下边缘被 `mask-image` 自然羽化进 `bg-muted/40` 段落
+- 浅色模式 = 米白底上柔和的橄榄绿/浅金光晕；暗色模式 = 深墨绿底上同色光晕
+- 不再像"贴上去的黑盒子"
 
-### 4. 球体标题在浅色模式下"发绿看不清"
-根因：`InfiniteMenu.tsx` 标题用 `text-foreground`（亮色 = `hsl(120 35% 12%)` 深墨绿），叠在偏绿色的农场图片上对比度差。
+### 2. 调强浅色模式下文字对比度（顺手优化）
+canvas 透明后，标题/描述会落在偏浅色的渐变背景上，原本用 `text-foreground`（深墨绿）已经足够清晰；为防止恰好压在球体亮色图片上时仍偏淡，把已加的 drop-shadow 稍微调整：
+- 标题 shadow 颜色由 `hsl(var(--background)/0.9)` 改为更稳的 `hsl(var(--background)/0.75)` + 更小模糊半径，避免在浅底上出现明显光晕
+- 描述同步微调
 
-方案：给标题与描述加可读性兜底，不改主色调：
-- 标题：保留 `text-foreground`，但加 `drop-shadow-[0_2px_8px_hsl(var(--background)/0.85)]` 与 `[text-shadow:0_1px_2px_hsl(var(--background)/0.6)]` 双重发光描边，让文字在任何图片背景下都浮起来
-- 描述：同样加更轻一档的 drop-shadow
-- 暗模式下 `--background` = 深绿，发光自动变成深色描边，浅色文字依然清晰
-- 不需要加底板色块，保持极简观感
+### 3. 快速验证
+切到 `/about`，检查：
+- 球体周围背景与页面底色无缝过渡，没有矩形黑块
+- 浅色 / 暗色双模式下标题与描述都能清晰阅读
+- 球体本身贴图、旋转动画正常
 
-### 文件改动清单
-- `src/components/Services.tsx` — 改 04 项 description（1 行）
-- `src/components/About.tsx` — 改右上信息卡 1 格 + 球体外层 div className
-- `src/components/Hero.tsx` — 文本颜色全部改为固定浅色
-- `src/pages/Index.tsx` — 「产业园」section 文本颜色固定浅色
-- `src/components/InfiniteMenu.tsx` — 标题/描述加 drop-shadow + text-shadow
-- `src/index.css`（可选）— 新增 `--hero-foreground` token 与 Tailwind 映射
+## 文件改动
+- `src/components/InfiniteMenu.tsx` — 改 1 处 context 选项 + 微调 2 处文字 shadow 强度
 
-不改：球体交互逻辑、数据、动效、其他模块。
+不动数据、不动布局、不动其他组件。
