@@ -1,7 +1,11 @@
+import { useRef } from "react";
 import heroImage from "@/assets/hero-architecture.jpg";
 import GradualBlur from "@/components/GradualBlur";
+import VariableProximity from "@/components/VariableProximity";
 
 const Hero = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       <img
@@ -15,16 +19,32 @@ const Hero = () => {
       />
       <div className="absolute inset-0 hero-overlay" />
 
-      <div className="relative z-10 text-center max-w-5xl mx-auto px-6">
+      <div ref={containerRef} className="relative z-10 text-center max-w-5xl mx-auto px-6">
         <p className="text-xs md:text-sm tracking-[0.4em] text-accent mb-6 reveal">
           AN YANG HU · EXTRA VIRGIN OLIVE OIL
         </p>
         <h1 className="font-serif font-light text-[hsl(40_25%_94%)] text-architectural mb-8 reveal leading-[1.15]">
           <span className="block whitespace-nowrap text-5xl md:text-7xl lg:text-8xl">
-            安阳湖橄榄油
+            <VariableProximity
+              label="安阳湖橄榄油"
+              containerRef={containerRef}
+              radius={140}
+              falloff="gaussian"
+              fromFontVariationSettings="'wght' 300"
+              toFontVariationSettings="'wght' 900"
+              style={{ fontFamily: 'inherit' }}
+            />
           </span>
           <span className="block whitespace-nowrap text-3xl md:text-5xl lg:text-6xl mt-4 text-[hsl(40_25%_94%/0.9)]">
-            湖北十堰 · 特级初榨橄榄油
+            <VariableProximity
+              label="湖北十堰 · 特级初榨橄榄油"
+              containerRef={containerRef}
+              radius={120}
+              falloff="gaussian"
+              fromFontVariationSettings="'wght' 300"
+              toFontVariationSettings="'wght' 800"
+              style={{ fontFamily: 'inherit' }}
+            />
           </span>
         </h1>
         <p className="text-base md:text-lg text-[hsl(40_25%_94%/0.85)] font-light leading-relaxed max-w-2xl mx-auto reveal-delayed text-balance">
