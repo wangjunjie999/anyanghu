@@ -1,26 +1,39 @@
 import Reveal from "@/components/Reveal";
+import GradualBlur from "@/components/GradualBlur";
+import waterImg from "@/assets/region-water.jpg";
+import climateImg from "@/assets/region-climate.jpg";
+import ecologyImg from "@/assets/region-ecology.jpg";
+import managementImg from "@/assets/region-management.jpg";
 
 const Services = () => {
   const advantages = [
     {
       number: "01",
       title: "好水源",
+      label: "WATER",
       description: "南水北调中线核心水源地，水质清澈，生态环境优越，为油橄榄生长提供天然滋养。",
+      image: waterImg,
     },
     {
       number: "02",
       title: "好气候",
+      label: "CLIMATE",
       description: "地处北纬32°油橄榄适宜生长带，光照充足，昼夜温差明显，利于油脂与多酚积累。",
+      image: climateImg,
     },
     {
       number: "03",
       title: "好生态",
+      label: "ECOLOGY",
       description: "山水环绕、林木葱郁，空气清透，远离工业污染，孕育干净纯粹的橄榄果。",
+      image: ecologyImg,
     },
     {
       number: "04",
       title: "好管理",
+      label: "MANAGEMENT",
       description: "从种植、采摘、运输、冷榨到品质检测，全流程可追溯的标准化品质管理。",
+      image: managementImg,
     },
   ];
 
@@ -39,20 +52,64 @@ const Services = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-x-20 gap-y-16">
-            {advantages.map((s, i) => (
-              <Reveal key={s.number} variant="fade-up" delay={i * 100} className="group">
-                <div className="flex items-start space-x-6">
-                  <span className="text-minimal text-primary font-medium">{s.number}</span>
-                  <div>
-                    <h4 className="font-serif text-2xl font-light mb-4 text-architectural text-foreground group-hover:text-primary transition-colors duration-500">
-                      {s.title}
-                    </h4>
-                    <p className="text-muted-foreground leading-relaxed">{s.description}</p>
-                  </div>
+          <div className="space-y-24 md:space-y-32">
+            {advantages.map((s, i) => {
+              const reverse = i % 2 === 1;
+              return (
+                <div
+                  key={s.number}
+                  className={`grid md:grid-cols-12 gap-10 md:gap-16 items-center`}
+                >
+                  <Reveal
+                    variant="fade-scale"
+                    className={`md:col-span-7 ${reverse ? "md:order-2" : ""}`}
+                  >
+                    <div className="relative overflow-hidden bg-muted group">
+                      <img
+                        src={s.image}
+                        alt={s.title}
+                        loading="lazy"
+                        width={1280}
+                        height={896}
+                        className="w-full aspect-[4/3] object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                      />
+                      <GradualBlur
+                        position="bottom"
+                        height="3rem"
+                        strength={1.2}
+                        divCount={4}
+                        curve="bezier"
+                        zIndex={2}
+                      />
+                    </div>
+                  </Reveal>
+
+                  <Reveal
+                    variant="fade-up"
+                    delay={120}
+                    className={`md:col-span-5 ${reverse ? "md:order-1" : ""}`}
+                  >
+                    <div className="space-y-6">
+                      <div className="flex items-baseline gap-4">
+                        <span className="font-serif text-5xl md:text-6xl font-light text-primary leading-none">
+                          {s.number}
+                        </span>
+                        <span className="text-minimal text-muted-foreground">
+                          {s.label}
+                        </span>
+                      </div>
+                      <h4 className="font-serif text-3xl md:text-4xl font-light text-architectural text-foreground">
+                        {s.title}
+                      </h4>
+                      <div className="w-12 h-px bg-primary/60" />
+                      <p className="text-muted-foreground leading-relaxed text-lg">
+                        {s.description}
+                      </p>
+                    </div>
+                  </Reveal>
                 </div>
-              </Reveal>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
