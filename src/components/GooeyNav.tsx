@@ -15,6 +15,8 @@ export interface GooeyNavProps {
   timeVariance?: number;
   colors?: number[];
   initialActiveIndex?: number;
+  vertical?: boolean;
+  onItemClick?: () => void;
 }
 
 const GooeyNav: React.FC<GooeyNavProps> = ({
@@ -26,6 +28,8 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   timeVariance = 300,
   colors = [1, 2, 3, 1, 2, 3, 1, 4],
   initialActiveIndex = 0,
+  vertical = false,
+  onItemClick,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLUListElement>(null);
@@ -120,7 +124,10 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
       }
     }
     // Navigate after animation kickoff
-    setTimeout(() => navigate(href), 120);
+    setTimeout(() => {
+      navigate(href);
+      onItemClick?.();
+    }, 320);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLAnchorElement>, index: number, href: string) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -270,12 +277,16 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
         <nav>
           <ul
             ref={navRef}
-            className="flex items-center gap-2 list-none m-0 p-0 relative"
+            className={`list-none m-0 p-0 relative ${
+              vertical ? 'flex flex-col items-stretch gap-2' : 'flex items-center gap-2'
+            }`}
           >
             {items.map((item, index) => (
               <li
                 key={item.href}
                 className={`relative text-sm tracking-wide transition-colors ${
+                  vertical ? 'text-center' : ''
+                } ${
                   activeIndex === index ? 'active' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -283,7 +294,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
                   href={item.href}
                   onClick={(e) => handleClick(e, index, item.href)}
                   onKeyDown={(e) => handleKeyDown(e, index, item.href)}
-                  className="outline-none py-2 px-4 inline-block"
+                  className={`outline-none py-2 px-4 ${vertical ? 'block w-full' : 'inline-block'}`}
                 >
                   {item.label}
                 </a>
