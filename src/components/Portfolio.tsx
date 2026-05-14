@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import gift1 from "@/assets/project-1.jpg";
 import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
 import CircularGallery from "@/components/CircularGallery";
+import { useTheme } from "@/components/ThemeProvider";
 
 const products = [
   {
@@ -33,6 +35,16 @@ const products = [
 ];
 
 const Portfolio = () => {
+  const { theme } = useTheme();
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const update = () => setIsDark(document.documentElement.classList.contains("dark"));
+    update();
+    const obs = new MutationObserver(update);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, [theme]);
+  const galleryTextColor = isDark ? "hsl(40 25% 92%)" : "hsl(38 25% 22%)";
   return (
     <section id="work" className="py-32 bg-background">
       <div className="container mx-auto px-6">
@@ -52,7 +64,7 @@ const Portfolio = () => {
             <CircularGallery
               items={products.map((p) => ({ image: p.image, text: p.title }))}
               bend={3}
-              textColor="hsl(38 25% 22%)"
+              textColor={galleryTextColor}
               borderRadius={0.05}
               scrollEase={0.04}
               font="500 22px 'Noto Serif SC', serif"
