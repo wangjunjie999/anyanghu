@@ -1,11 +1,18 @@
 import Navigation from "@/components/Navigation";
 import About from "@/components/About";
+import SEO from "@/components/SEO";
 
 const AboutPage = () => {
   return (
     <div className="min-h-screen">
+      <SEO
+        title="品牌故事 · 安阳湖橄榄油"
+        description="十堰泽盟农业开发有限公司成立于 2017 年，是湖北省林业产业化省级重点龙头企业、国家高新技术企业，专注本土特级初榨橄榄油。"
+        path="/about"
+      />
       <Navigation />
       <div className="pt-24">
+        <h1 className="sr-only">品牌故事 — 十堰泽盟农业开发有限公司</h1>
         <About />
         <section className="py-32 bg-background">
           <div className="container mx-auto px-6">

@@ -40,6 +40,8 @@ const Navigation = () => {
           variant="ghost"
           size="sm"
           className="md:hidden"
+          aria-label={isMenuOpen ? "关闭导航菜单" : "打开导航菜单"}
+          aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? '✕' : '☰'}

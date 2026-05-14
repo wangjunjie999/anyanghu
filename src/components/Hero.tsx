@@ -3,9 +3,14 @@ import heroImage from "@/assets/hero-architecture.jpg";
 const Hero = () => {
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+      <img
+        src={heroImage}
+        alt="安阳湖油橄榄基地航拍 — 湖北十堰郧阳"
+        fetchPriority="high"
+        decoding="async"
+        width={1920}
+        height={1080}
+        className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 hero-overlay" />
 
@@ -14,7 +19,7 @@ const Hero = () => {
           AN YANG HU · EXTRA VIRGIN OLIVE OIL
         </p>
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-light text-background text-architectural mb-8 reveal">
-          安阳湖橄榄油
+          安阳湖橄榄油 — 湖北十堰特级初榨橄榄油
         </h1>
         <p className="text-base md:text-lg text-background/85 font-light leading-relaxed max-w-2xl mx-auto reveal-delayed">
           源自湖北十堰郧阳安阳湖油橄榄基地，低温物理冷榨，

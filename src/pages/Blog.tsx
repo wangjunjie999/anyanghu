@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import { blogPosts } from "@/data/blogPosts";
 
 const Blog = () => {
@@ -14,6 +15,11 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="品牌资讯 · 安阳湖橄榄油基地动态与橄榄油知识"
+        description="走进安阳湖油橄榄基地：种植采摘、低温冷榨、橄榄油烹饪知识、礼盒场景与品牌新动态。"
+        path="/blog"
+      />
       <Navigation />
 
       <section className="pt-32 pb-20">
@@ -124,8 +130,11 @@ const Blog = () => {
               留下邮箱，第一时间获取基地动态、新品发布与礼盒优惠
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+              <label htmlFor="newsletter-email" className="sr-only">邮箱地址</label>
               <input
+                id="newsletter-email"
                 type="email"
+                aria-label="邮箱地址"
                 placeholder="请输入您的邮箱"
                 className="flex-1 px-6 py-4 bg-background border border-border text-foreground placeholder:text-muted-foreground"
               />

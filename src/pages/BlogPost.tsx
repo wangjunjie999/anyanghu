@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import { blogPosts } from "@/data/blogPosts";
 
 const BlogPost = () => {
@@ -29,8 +30,25 @@ const BlogPost = () => {
     );
   }
 
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    author: { "@type": "Organization", name: post.author },
+    datePublished: post.date,
+    image: `https://anyanghu.lovable.app${post.image}`,
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${post.title} · 安阳湖橄榄油`}
+        description={post.excerpt}
+        path={`/blog/${post.id}`}
+        ogType="article"
+        jsonLd={articleLd}
+      />
       <Navigation />
       
       {/* Article Header */}
@@ -83,7 +101,7 @@ const BlogPost = () => {
                     .split('\n')
                     .map(line => {
                       if (line.startsWith('# ')) {
-                        return `<h1 class="text-3xl md:text-4xl font-light text-architectural mb-8 mt-12">${line.substring(2)}</h1>`;
+                        return `<h2 class="text-3xl md:text-4xl font-light text-architectural mb-8 mt-12">${line.substring(2)}</h2>`;
                       } else if (line.startsWith('## ')) {
                         return `<h2 class="text-2xl md:text-3xl font-light text-architectural mb-6 mt-10">${line.substring(3)}</h2>`;
                       } else if (line.startsWith('### ')) {

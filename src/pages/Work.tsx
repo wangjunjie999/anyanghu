@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import gift from "@/assets/project-1.jpg";
 import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
@@ -68,6 +69,11 @@ const Work = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="产品中心 · 安阳湖特级初榨橄榄油与精品礼盒"
+        description="科拉蒂高端礼盒、经典款礼盒、单品种橄榄油及日常瓶装系列 — 安阳湖低温物理冷榨，酸度 ≤ 0.5%，多酚高达 368.67 mg/kg。"
+        path="/work"
+      />
       <Navigation />
 
       <section className="pt-32 pb-20">
@@ -128,9 +134,9 @@ const Work = () => {
 
                   <div className="space-y-5">
                     <div>
-                      <h3 className="font-serif text-2xl lg:text-3xl font-light text-architectural text-foreground mb-2">
+                      <h2 className="font-serif text-2xl lg:text-3xl font-light text-architectural text-foreground mb-2">
                         {p.title}
-                      </h3>
+                      </h2>
                       <p className="text-minimal text-muted-foreground">{p.location}</p>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">{p.description}</p>
