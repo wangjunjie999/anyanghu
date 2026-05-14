@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import ScrollFloat from "@/components/ScrollFloat";
 import About from "@/components/About";
 import SEO from "@/components/SEO";
 
