@@ -5,6 +5,8 @@ import About from "@/components/About";
 import Portfolio from "@/components/Portfolio";
 import Contact from "@/components/Contact";
 import SEO from "@/components/SEO";
+import Reveal from "@/components/Reveal";
+import GradualBlur from "@/components/GradualBlur";
 import heroImage from "@/assets/hero-architecture.jpg";
 import giftImage from "@/assets/project-1.jpg";
 
@@ -49,15 +51,15 @@ const Index = () => {
       <section id="gift" className="py-32 bg-muted/40">
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-            <div className="relative overflow-hidden">
+            <Reveal variant="fade-scale" className="relative overflow-hidden">
               <img
                 src={giftImage}
                 alt="安阳湖橄榄油礼盒"
                 loading="lazy"
                 className="w-full h-[60vh] object-cover"
               />
-            </div>
-            <div>
+            </Reveal>
+            <Reveal variant="fade-up" delay={120}>
               <h2 className="text-minimal text-primary mb-4">GIFT CUSTOMIZATION</h2>
               <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground mb-8">
                 一份能走进日常三餐的
