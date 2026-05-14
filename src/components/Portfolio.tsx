@@ -3,6 +3,8 @@ import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
+import PourOilReveal from "@/components/PourOilReveal";
+import CircularGallery from "@/components/CircularGallery";
 
 const products = [
   {
