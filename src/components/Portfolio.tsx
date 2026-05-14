@@ -48,17 +48,29 @@ const Portfolio = () => {
             </p>
           </div>
 
+          {/* 弧形产品轮播 */}
+          <div className="relative h-[380px] md:h-[560px] mb-24 -mx-6 md:-mx-12">
+            <CircularGallery
+              items={products.map((p) => ({ image: p.image, text: p.title }))}
+              bend={3}
+              textColor="hsl(38 25% 22%)"
+              borderRadius={0.05}
+              scrollEase={0.04}
+              font="500 22px 'Noto Serif SC', serif"
+            />
+          </div>
+
           <div className="grid md:grid-cols-2 gap-x-12 gap-y-24">
             {products.map((p, i) => (
               <Reveal key={i} variant="fade-scale" delay={(i % 2) * 120} className="group">
-                <div className="relative overflow-hidden bg-muted">
-                  <img
+                <div className="relative bg-muted">
+                  <PourOilReveal
                     src={p.image}
                     alt={p.title}
-                    loading="lazy"
-                    className="w-full h-[55vh] object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-[55vh]"
+                    imgClassName="transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   <GradualBlur position="bottom" height="3rem" strength={1.2} divCount={4} curve="bezier" zIndex={2} />
                 </div>
 
