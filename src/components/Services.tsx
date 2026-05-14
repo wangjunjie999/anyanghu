@@ -43,17 +43,18 @@ const Services = () => {
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
-            <h2 className="text-minimal text-primary mb-4">PRODUCING REGION</h2>
+            <h2 className="text-minimal text-primary mb-6">PRODUCING REGION</h2>
             <ScrollFloat
-              containerClassName="my-0"
+              containerClassName="my-0 py-4 md:py-6"
               textClassName="font-serif text-4xl md:text-6xl font-light text-architectural text-foreground"
-              stagger={0.04}
-              scrollStart="top bottom-=10%"
-              scrollEnd="bottom center"
+              stagger={0.05}
+              animationDuration={1.2}
+              scrollStart="top bottom-=5%"
+              scrollEnd="bottom center+=10%"
             >
               产地优势
             </ScrollFloat>
-            <p className="mt-6 text-muted-foreground max-w-2xl">
+            <p className="mt-10 md:mt-12 text-muted-foreground max-w-2xl">
               一瓶好橄榄油，始于一片好土地。安阳湖油橄榄基地坐落于秦巴山脉与汉江交汇处，
               得天独厚的水土与气候，孕育出具有产地特色的中国本土橄榄油。
             </p>

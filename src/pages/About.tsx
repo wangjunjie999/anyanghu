@@ -18,13 +18,14 @@ const AboutPage = () => {
         <section className="py-32 bg-background">
           <div className="container mx-auto px-6">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-minimal text-primary mb-4">HONORS</h2>
+              <h2 className="text-minimal text-primary mb-6">HONORS</h2>
               <ScrollFloat
-                containerClassName="my-0 mb-12"
+                containerClassName="my-0 py-4 md:py-6 mb-12"
                 textClassName="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground"
-                stagger={0.04}
-                scrollStart="top bottom-=10%"
-                scrollEnd="bottom center"
+                stagger={0.05}
+                animationDuration={1.2}
+                scrollStart="top bottom-=5%"
+                scrollEnd="bottom center+=10%"
               >
                 荣誉与资质
               </ScrollFloat>

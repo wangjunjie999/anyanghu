@@ -55,17 +55,18 @@ const Portfolio = () => {
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
-            <h2 className="text-minimal text-primary mb-4">PRODUCTS</h2>
+            <h2 className="text-minimal text-primary mb-6">PRODUCTS</h2>
             <ScrollFloat
-              containerClassName="my-0"
+              containerClassName="my-0 py-4 md:py-6"
               textClassName="font-serif text-4xl md:text-6xl font-light text-architectural text-foreground"
-              stagger={0.04}
-              scrollStart="top bottom-=10%"
-              scrollEnd="bottom center"
+              stagger={0.05}
+              animationDuration={1.2}
+              scrollStart="top bottom-=5%"
+              scrollEnd="bottom center+=10%"
             >
               产品中心
             </ScrollFloat>
-            <p className="mt-6 text-muted-foreground max-w-2xl">
+            <p className="mt-10 md:mt-12 text-muted-foreground max-w-2xl">
               从节日礼赠到日常餐桌，安阳湖为不同的生活场景提供合适的橄榄油选择。
             </p>
           </div>
