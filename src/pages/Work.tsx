@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import SEO from "@/components/SEO";
+import CircularGallery from "@/components/CircularGallery";
 import gift from "@/assets/project-1.jpg";
 import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
@@ -86,6 +87,19 @@ const Work = () => {
               从节日礼赠到日常餐桌，安阳湖为不同的生活场景提供合适的橄榄油选择。
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="pb-12">
+        <div className="relative h-[380px] md:h-[600px] w-full">
+          <CircularGallery
+            items={products.map((p) => ({ image: p.image, text: p.title }))}
+            bend={3}
+            textColor="hsl(38 25% 22%)"
+            borderRadius={0.05}
+            scrollEase={0.04}
+            font="500 22px 'Noto Serif SC', serif"
+          />
         </div>
       </section>
 

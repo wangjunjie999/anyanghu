@@ -10,6 +10,7 @@ interface RevealProps {
   as?: ElementType;
   className?: string;
   threshold?: number;
+  bidirectional?: boolean;
 }
 
 const initialClass: Record<Variant, string> = {
@@ -25,6 +26,7 @@ const Reveal = ({
   as: Tag = "div",
   className,
   threshold = 0.15,
+  bidirectional = true,
 }: RevealProps) => {
   const ref = useRef<HTMLElement | null>(null);
   const [shown, setShown] = useState(false);
@@ -41,14 +43,16 @@ const Reveal = ({
       ([entry]) => {
         if (entry.isIntersecting) {
           setShown(true);
-          io.disconnect();
+          if (!bidirectional) io.disconnect();
+        } else if (bidirectional) {
+          setShown(false);
         }
       },
       { threshold }
     );
     io.observe(node);
     return () => io.disconnect();
-  }, [threshold]);
+  }, [threshold, bidirectional]);
 
   return (
     <Tag
