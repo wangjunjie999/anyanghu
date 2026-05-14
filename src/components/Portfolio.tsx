@@ -64,7 +64,7 @@ const Portfolio = () => {
             <CircularGallery
               items={products.map((p) => ({ image: p.image, text: p.title }))}
               bend={3}
-              textColor="hsl(var(--foreground))"
+              textColor={galleryTextColor}
               borderRadius={0.05}
               scrollEase={0.04}
               font="500 22px 'Noto Serif SC', serif"
