@@ -117,8 +117,14 @@ const About = () => {
               </p>
             </div>
 
-            <div className="relative w-full h-[520px] md:h-[640px] rounded-sm overflow-hidden bg-background border border-border">
-              <InfiniteMenu items={craftSteps} />
+            <div className="relative w-full h-[520px] md:h-[640px] border-y border-border/40">
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.12),transparent_70%)]"
+              />
+              <div className="absolute inset-0">
+                <InfiniteMenu items={craftSteps} />
+              </div>
             </div>
 
             {/* SEO / 无障碍兜底列表 */}
