@@ -5,6 +5,7 @@ import workshop from "@/assets/project-3.jpg";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
 import CircularGallery from "@/components/CircularGallery";
+import ScrollFloat from "@/components/ScrollFloat";
 import { useTheme } from "@/components/ThemeProvider";
 
 const products = [
