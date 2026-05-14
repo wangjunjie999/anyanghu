@@ -84,8 +84,8 @@ const Services = () => {
                       <GradualBlur
                         position="bottom"
                         height="3rem"
-                        strength={1.2}
-                        divCount={4}
+                        strength={1}
+                        divCount={2}
                         curve="bezier"
                         zIndex={2}
                       />

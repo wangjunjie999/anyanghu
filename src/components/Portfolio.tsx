@@ -94,7 +94,7 @@ const Portfolio = () => {
                     className="w-full h-[55vh] object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                  <GradualBlur position="bottom" height="3rem" strength={1.2} divCount={4} curve="bezier" zIndex={2} />
+                  <GradualBlur position="bottom" height="3rem" strength={1} divCount={2} curve="bezier" zIndex={2} />
                 </div>
 
                 <div className="mt-8 space-y-4">
