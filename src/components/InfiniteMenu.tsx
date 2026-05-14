@@ -1128,6 +1128,8 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
           left-6 md:left-10
           top-6 md:top-10
           max-w-[10ch]
+          drop-shadow-[0_2px_10px_hsl(var(--background)/0.9)]
+          [text-shadow:0_1px_2px_hsl(var(--background)/0.7),0_0_18px_hsl(var(--background)/0.5)]
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           ${
@@ -1151,6 +1153,8 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
           bottom-6 md:bottom-10
           right-6 md:right-10
           text-right
+          drop-shadow-[0_1px_6px_hsl(var(--background)/0.9)]
+          [text-shadow:0_1px_2px_hsl(var(--background)/0.6)]
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           ${

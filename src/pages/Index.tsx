@@ -88,12 +88,12 @@ const Index = () => {
       >
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative container mx-auto px-6">
-          <div className="max-w-3xl text-background">
+          <div className="max-w-3xl text-[hsl(40_25%_94%)]">
             <p className="text-minimal text-accent mb-6">INDUSTRY · TOURISM · WELLNESS</p>
             <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural mb-8">
               油橄榄大健康产业园
             </h3>
-            <p className="text-background/85 leading-relaxed text-lg">
+            <p className="text-[hsl(40_25%_94%/0.85)] leading-relaxed text-lg">
               现代化榨油体验车间、科研与研学馆、展示展销馆、农旅融合空间，
               未来打造集种植、加工、文旅、康养于一体的产业融合示范园，
               让一颗橄榄果的旅程被看见、被体验。

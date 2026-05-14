@@ -96,8 +96,8 @@ const About = () => {
                   <p className="text-foreground leading-relaxed">湖北十堰郧阳安阳湖</p>
                 </div>
                 <div>
-                  <h4 className="text-minimal text-muted-foreground mb-2">工艺标准</h4>
-                  <p className="text-foreground leading-relaxed">8 小时低温冷榨 · 特级初榨</p>
+                  <h4 className="text-minimal text-muted-foreground mb-2">核心产品</h4>
+                  <p className="text-foreground leading-relaxed">特级初榨橄榄油</p>
                 </div>
               </div>
             </div>
@@ -117,10 +117,22 @@ const About = () => {
               </p>
             </div>
 
-            <div className="relative w-full h-[520px] md:h-[640px] border-y border-border/40">
+            <div
+              className="relative w-full h-[520px] md:h-[640px]"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(180deg,transparent 0%,black 12%,black 88%,transparent 100%)",
+                maskImage:
+                  "linear-gradient(180deg,transparent 0%,black 12%,black 88%,transparent 100%)",
+              }}
+            >
               <div
                 aria-hidden
-                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.12),transparent_70%)]"
+                className="absolute inset-0 pointer-events-none bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary)/0.06)_30%,hsl(var(--accent)/0.10)_55%,hsl(var(--primary)/0.06)_75%,transparent_100%)]"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_center,hsl(var(--accent)/0.14),transparent_70%)]"
               />
               <div className="absolute inset-0">
                 <InfiniteMenu items={craftSteps} />

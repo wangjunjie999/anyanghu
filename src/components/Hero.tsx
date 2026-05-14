@@ -19,15 +19,15 @@ const Hero = () => {
         <p className="text-xs md:text-sm tracking-[0.4em] text-accent mb-6 reveal">
           AN YANG HU · EXTRA VIRGIN OLIVE OIL
         </p>
-        <h1 className="font-serif font-light text-background text-architectural mb-8 reveal leading-[1.15]">
+        <h1 className="font-serif font-light text-[hsl(40_25%_94%)] text-architectural mb-8 reveal leading-[1.15]">
           <span className="block whitespace-nowrap text-5xl md:text-7xl lg:text-8xl">
             安阳湖橄榄油
           </span>
-          <span className="block whitespace-nowrap text-3xl md:text-5xl lg:text-6xl mt-4 text-background/90">
+          <span className="block whitespace-nowrap text-3xl md:text-5xl lg:text-6xl mt-4 text-[hsl(40_25%_94%/0.9)]">
             湖北十堰 · 特级初榨橄榄油
           </span>
         </h1>
-        <p className="text-base md:text-lg text-background/85 font-light leading-relaxed max-w-2xl mx-auto reveal-delayed text-balance">
+        <p className="text-base md:text-lg text-[hsl(40_25%_94%/0.85)] font-light leading-relaxed max-w-2xl mx-auto reveal-delayed text-balance">
           源自湖北十堰郧阳安阳湖油橄榄基地，低温物理冷榨，保留橄榄果自然清香与天然营养，为家庭餐桌带来一瓶清爽、健康、有品质感的特级初榨橄榄油。
         </p>
 
@@ -40,7 +40,7 @@ const Hero = () => {
           </a>
           <a
             href="/about"
-            className="inline-flex items-center justify-center px-8 py-3 border border-background/60 text-background text-sm tracking-widest hover:bg-background/10 transition-colors duration-300"
+            className="inline-flex items-center justify-center px-8 py-3 border border-[hsl(40_25%_94%/0.6)] text-[hsl(40_25%_94%)] text-sm tracking-widest hover:bg-[hsl(40_25%_94%/0.1)] transition-colors duration-300"
           >
             了解品牌
           </a>
@@ -48,8 +48,8 @@ const Hero = () => {
       </div>
 
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 reveal-delayed z-20">
-        <div className="w-px h-16 bg-background/40 mx-auto" />
-        <div className="text-minimal text-background/60 mt-4">SCROLL</div>
+        <div className="w-px h-16 bg-[hsl(40_25%_94%/0.4)] mx-auto" />
+        <div className="text-minimal text-[hsl(40_25%_94%/0.6)] mt-4">SCROLL</div>
       </div>
 
       <GradualBlur position="bottom" height="8rem" strength={2} divCount={6} curve="bezier" zIndex={5} />
