@@ -1,34 +1,65 @@
-## 三处修改
+# 产地优势板块视觉增强计划
 
-### 1. 删除倒油动画
-- 删除文件：`src/components/PourOilReveal.tsx`
-- 修改 `src/components/Portfolio.tsx`：移除 `import PourOilReveal`，把 `<PourOilReveal>` 还原为原来的 `<img>`（保留 hover 缩放、`overflow-hidden`、`GradualBlur`）。
+## 目标
+让「产地优势」板块从纯文字列表升级为富有视觉冲击力的图文展示，既保留简约调性，又通过真实感图片传递产地价值。
 
-### 2. 修复 Hero 标题中文换行
-当前标题 `安阳湖橄榄油 — 湖北十堰特级初榨橄榄油` 在 `max-w-4xl` 容器里被浏览器拆成「湖北十堰特级初榨橄榄」+「油」这种把词组拆断的难看断行。
+## 布局方案：交错式大图图文（Zigzag）
 
-方案：把标题拆成两行结构，每行一个完整词组，并对各行加 `whitespace-nowrap` 避免再被拆开；同时整体改为 `inline-block` 居中，用换行而不是自动 wrap。
+将现有的 2×2 纯文字网格，改为左右交替的大图+文字排版：
 
-```tsx
-<h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-light text-background text-architectural mb-8 reveal leading-tight">
-  <span className="block whitespace-nowrap">安阳湖橄榄油</span>
-  <span className="block whitespace-nowrap text-4xl md:text-5xl lg:text-6xl mt-3 text-background/90">
-    湖北十堰 · 特级初榨橄榄油
-  </span>
-</h1>
+```
+┌─────────────────────────────────────┐
+│  [产地优势] 标题 + 导语              │
+├─────────────────────────────────────┤
+│  ┌────────┐                         │
+│  │ 水源图 │   01 好水源             │
+│  │        │   文字描述              │
+│  └────────┘                         │
+├─────────────────────────────────────┤
+│                         ┌────────┐  │
+│          02 好气候      │ 气候图 │  │
+│          文字描述       │        │  │
+│                         └────────┘  │
+├─────────────────────────────────────┤
+│  ┌────────┐                         │
+│  │ 生态图 │   03 好生态             │
+│  │        │   文字描述              │
+│  └────────┘                         │
+├─────────────────────────────────────┤
+│                         ┌────────┐  │
+│          04 好管理      │ 管理图 │  │
+│          文字描述       │        │  │
+│                         └────────┘  │
+└─────────────────────────────────────┘
 ```
 
-副标题段落同样把硬换行去掉，改用 CSS `text-balance` 让中文自然排版（断在标点处）。
+## 执行步骤
 
-容器从 `max-w-4xl` 调到 `max-w-5xl`，给主标题留更宽的空间，避免大屏强行省略。
+1. **生成 4 张产地配图**（使用 imagegen，风格统一：自然光、暖色调、中国湖北山水田园风格）
+   - `water-source.jpg` — 清澈水源/汉江/湖泊意象
+   - `climate.jpg` — 阳光普照的橄榄园/北纬32°开阔地貌
+   - `ecology.jpg` — 山林环绕、绿意盎然的生态景观
+   - `management.jpg` — 现代化榨油车间/标准化管理场景
 
-### 3. 「查看礼盒」按钮跳转改为公司详情页
-`src/components/Hero.tsx`：把 `<a href="#gift">查看礼盒</a>` 改为 `<a href="/about">了解品牌</a>`（按钮文字与目的地一致）。
+2. **重构 `Services.tsx`**
+   - 改为单列全宽布局，图文交替排列
+   - 图片区域：占 55% 宽度，aspect-ratio 4:3 或 16:10，使用 `object-cover`
+   - 文字区域：占 45% 宽度，垂直居中
+   - 图片添加 `overflow-hidden` + `hover:scale-105` 微交互
+   - 保留现有 `Reveal` 滚动动画（`fade-up` 或改为 `fade-rotate`）
+   - 奇数项（01、03）：图片在左，文字在右
+   - 偶数项（02、04）：图片在右，文字在左
+   - 移动端：统一改为「图在上，文在下」堆叠
 
-如果你希望文字仍叫「查看礼盒」但跳到 `/about`，告诉我即可，默认按"了解品牌"更贴合 about 页。
+3. **视觉一致性**
+   - 图片底部使用 `GradualBlur` 组件做柔和过渡（与 Portfolio 板块一致）
+   - 图片整体色调统一为暖调自然光，与品牌大地色系协调
+   - 序号 `01/02/03/04` 放大处理，作为视觉锚点
 
----
+## 技术细节
+- 复用现有 `Reveal` 和 `GradualBlur` 组件
+- 图片使用 `loading="lazy"` 懒加载
+- 响应式：`md:` 断点切换为左右布局
 
-## 改动文件清单
-- 删除：`src/components/PourOilReveal.tsx`
-- 编辑：`src/components/Portfolio.tsx`、`src/components/Hero.tsx`
+## 后续替换
+生成的 4 张图片作为占位，您后续可直接替换为 `src/assets/` 下的实拍照片，路径和文件名保持一致即可，无需改代码。
