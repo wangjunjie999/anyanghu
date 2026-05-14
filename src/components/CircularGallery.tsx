@@ -371,10 +371,26 @@ class App {
     this.addEventListeners();
   }
   createRenderer() {
-    this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
+    const isCoarse =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    const dprCap = isCoarse ? 1.5 : 2;
+    this.renderer = new Renderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, dprCap) });
     this.gl = this.renderer.gl;
     this.gl.clearColor(0, 0, 0, 0);
     this.container.appendChild(this.renderer.gl.canvas as HTMLCanvasElement);
+  }
+  paused: boolean = false;
+  pause() {
+    if (this.paused) return;
+    this.paused = true;
+    if (this.raf) window.cancelAnimationFrame(this.raf);
+  }
+  resume() {
+    if (!this.paused) return;
+    this.paused = false;
+    this.update();
   }
   createCamera() {
     this.camera = new Camera(this.gl);
@@ -448,6 +464,7 @@ class App {
     }
   }
   update() {
+    if (this.paused) return;
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
     if (this.medias) {
@@ -510,8 +527,20 @@ export default function CircularGallery({
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!containerRef.current) return;
-    const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase });
-    return () => { app.destroy(); };
+    const node = containerRef.current;
+    const app = new App(node, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase });
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) app.resume();
+        else app.pause();
+      },
+      { rootMargin: '150px' }
+    );
+    io.observe(node);
+    return () => {
+      io.disconnect();
+      app.destroy();
+    };
   }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
   return <div className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing" ref={containerRef} />;
 }
