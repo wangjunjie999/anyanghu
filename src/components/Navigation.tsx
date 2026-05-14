@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import GooeyNav from "@/components/GooeyNav";
 
 const navLinks = [
   { href: "/work", label: "产品中心" },
@@ -12,6 +14,8 @@ const navLinks = [
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const activeIndex = navLinks.findIndex((l) => location.pathname.startsWith(l.href));
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -20,16 +24,14 @@ const Navigation = () => {
           安阳湖橄榄油
         </a>
 
-        <div className="hidden md:flex items-center space-x-10">
-          {navLinks.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm tracking-wide text-muted-foreground hover:text-primary transition-colors duration-300"
-            >
-              {l.label}
-            </a>
-          ))}
+        <div className="hidden md:flex items-center">
+          <GooeyNav
+            key={activeIndex}
+            items={navLinks}
+            initialActiveIndex={activeIndex}
+            particleCount={14}
+            animationTime={600}
+          />
         </div>
 
         <div className="hidden md:flex items-center space-x-4">
