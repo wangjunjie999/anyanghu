@@ -3,7 +3,6 @@ import olives from "@/assets/project-2.jpg";
 import workshop from "@/assets/project-3.jpg";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
-import PourOilReveal from "@/components/PourOilReveal";
 import CircularGallery from "@/components/CircularGallery";
 
 const products = [
@@ -63,12 +62,12 @@ const Portfolio = () => {
           <div className="grid md:grid-cols-2 gap-x-12 gap-y-24">
             {products.map((p, i) => (
               <Reveal key={i} variant="fade-scale" delay={(i % 2) * 120} className="group">
-                <div className="relative bg-muted">
-                  <PourOilReveal
+                <div className="relative overflow-hidden bg-muted">
+                  <img
                     src={p.image}
                     alt={p.title}
-                    className="w-full h-[55vh]"
-                    imgClassName="transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    className="w-full h-[55vh] object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   <GradualBlur position="bottom" height="3rem" strength={1.2} divCount={4} curve="bezier" zIndex={2} />
