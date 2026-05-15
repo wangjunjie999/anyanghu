@@ -350,11 +350,15 @@ class App {
   raf: number = 0;
   boundOnResize!: () => void;
   boundOnWheel!: (e: Event) => void;
-  boundOnTouchDown!: (e: MouseEvent | TouchEvent) => void;
-  boundOnTouchMove!: (e: MouseEvent | TouchEvent) => void;
-  boundOnTouchUp!: () => void;
+  boundOnPointerDown!: (e: PointerEvent) => void;
+  boundOnPointerMove!: (e: PointerEvent) => void;
+  boundOnPointerUp!: (e: PointerEvent) => void;
   isDown: boolean = false;
   start: number = 0;
+  lastPointerX: number = 0;
+  lastPointerTime: number = 0;
+  velocity: number = 0;
+  pointerId: number | null = null;
   constructor(container: HTMLElement, { items, bend = 1, textColor = '#ffffff', borderRadius = 0, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05 }: AppConfig) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
