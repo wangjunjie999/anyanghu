@@ -394,6 +394,9 @@ class App {
   resume() {
     if (!this.paused) return;
     this.paused = false;
+    // avoid speed jump on resume: clamp current to target snapshot
+    this.scroll.last = this.scroll.current;
+    this.velocity = 0;
     this.update();
   }
   createCamera() {
