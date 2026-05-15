@@ -575,5 +575,5 @@ export default function CircularGallery({
       app.destroy();
     };
   }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
-  return <div className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing" ref={containerRef} />;
+  return <div className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing select-none" style={{ touchAction: 'pan-y' }} ref={containerRef} />;
 }
