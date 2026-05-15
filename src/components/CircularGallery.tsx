@@ -455,12 +455,13 @@ class App {
   onTouchMove(e: PointerEvent) {
     if (!this.isDown || (this.pointerId !== null && e.pointerId !== this.pointerId)) return;
     const x = e.clientX;
-    const distance = (this.start - x) * (this.scrollSpeed * 0.025);
+    const factor = this.scrollSpeed * (this.isCoarse ? 0.05 : 0.025);
+    const distance = (this.start - x) * factor;
     this.scroll.target = (this.scroll.position ?? 0) + distance;
     const now = performance.now();
     const dt = Math.max(1, now - this.lastPointerTime);
     // velocity in scroll-units per ms
-    this.velocity = ((this.lastPointerX - x) * (this.scrollSpeed * 0.025)) / dt;
+    this.velocity = ((this.lastPointerX - x) * factor) / dt;
     this.lastPointerX = x;
     this.lastPointerTime = now;
   }
@@ -471,8 +472,8 @@ class App {
     }
     this.isDown = false;
     this.pointerId = null;
-    // inertia: project velocity over an exponential decay tail (~250ms)
-    const inertia = this.velocity * 180;
+    // inertia: stronger projection on touch for natural flick
+    const inertia = this.velocity * (this.isCoarse ? 260 : 180);
     if (Math.abs(inertia) > 0.001) {
       this.scroll.target += inertia;
     }
