@@ -359,11 +359,17 @@ class App {
   lastPointerTime: number = 0;
   velocity: number = 0;
   pointerId: number | null = null;
+  isCoarse: boolean = false;
   constructor(container: HTMLElement, { items, bend = 1, textColor = '#ffffff', borderRadius = 0, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05 }: AppConfig) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
+    this.isCoarse =
+      typeof window !== 'undefined' &&
+      !!window.matchMedia &&
+      window.matchMedia('(hover: none), (pointer: coarse)').matches;
     this.scrollSpeed = scrollSpeed;
-    this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+    const ease = this.isCoarse ? Math.max(scrollEase, 0.085) : scrollEase;
+    this.scroll = { ease, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -449,12 +455,13 @@ class App {
   onTouchMove(e: PointerEvent) {
     if (!this.isDown || (this.pointerId !== null && e.pointerId !== this.pointerId)) return;
     const x = e.clientX;
-    const distance = (this.start - x) * (this.scrollSpeed * 0.025);
+    const factor = this.scrollSpeed * (this.isCoarse ? 0.05 : 0.025);
+    const distance = (this.start - x) * factor;
     this.scroll.target = (this.scroll.position ?? 0) + distance;
     const now = performance.now();
     const dt = Math.max(1, now - this.lastPointerTime);
     // velocity in scroll-units per ms
-    this.velocity = ((this.lastPointerX - x) * (this.scrollSpeed * 0.025)) / dt;
+    this.velocity = ((this.lastPointerX - x) * factor) / dt;
     this.lastPointerX = x;
     this.lastPointerTime = now;
   }
@@ -465,8 +472,8 @@ class App {
     }
     this.isDown = false;
     this.pointerId = null;
-    // inertia: project velocity over an exponential decay tail (~250ms)
-    const inertia = this.velocity * 180;
+    // inertia: stronger projection on touch for natural flick
+    const inertia = this.velocity * (this.isCoarse ? 260 : 180);
     if (Math.abs(inertia) > 0.001) {
       this.scroll.target += inertia;
     }
