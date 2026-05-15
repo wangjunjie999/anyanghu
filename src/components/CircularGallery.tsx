@@ -359,11 +359,17 @@ class App {
   lastPointerTime: number = 0;
   velocity: number = 0;
   pointerId: number | null = null;
+  isCoarse: boolean = false;
   constructor(container: HTMLElement, { items, bend = 1, textColor = '#ffffff', borderRadius = 0, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05 }: AppConfig) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
+    this.isCoarse =
+      typeof window !== 'undefined' &&
+      !!window.matchMedia &&
+      window.matchMedia('(hover: none), (pointer: coarse)').matches;
     this.scrollSpeed = scrollSpeed;
-    this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+    const ease = this.isCoarse ? Math.max(scrollEase, 0.085) : scrollEase;
+    this.scroll = { ease, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
