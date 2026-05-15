@@ -433,18 +433,46 @@ class App {
       });
     });
   }
-  onTouchDown(e: MouseEvent | TouchEvent) {
+  onTouchDown(e: PointerEvent) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
     this.isDown = true;
+    this.pointerId = e.pointerId;
+    try { this.container.setPointerCapture(e.pointerId); } catch {}
     this.scroll.position = this.scroll.current;
-    this.start = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    // align target to current to remove residual lerp tension
+    this.scroll.target = this.scroll.current;
+    this.start = e.clientX;
+    this.lastPointerX = e.clientX;
+    this.lastPointerTime = performance.now();
+    this.velocity = 0;
   }
-  onTouchMove(e: MouseEvent | TouchEvent) {
-    if (!this.isDown) return;
-    const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
+  onTouchMove(e: PointerEvent) {
+    if (!this.isDown || (this.pointerId !== null && e.pointerId !== this.pointerId)) return;
+    const x = e.clientX;
     const distance = (this.start - x) * (this.scrollSpeed * 0.025);
     this.scroll.target = (this.scroll.position ?? 0) + distance;
+    const now = performance.now();
+    const dt = Math.max(1, now - this.lastPointerTime);
+    // velocity in scroll-units per ms
+    this.velocity = ((this.lastPointerX - x) * (this.scrollSpeed * 0.025)) / dt;
+    this.lastPointerX = x;
+    this.lastPointerTime = now;
   }
-  onTouchUp() { this.isDown = false; this.onCheck(); }
+  onTouchUp(e?: PointerEvent) {
+    if (!this.isDown) return;
+    if (e && this.pointerId !== null) {
+      try { this.container.releasePointerCapture(this.pointerId); } catch {}
+    }
+    this.isDown = false;
+    this.pointerId = null;
+    // inertia: project velocity over an exponential decay tail (~250ms)
+    const inertia = this.velocity * 180;
+    if (Math.abs(inertia) > 0.001) {
+      this.scroll.target += inertia;
+    }
+    this.velocity = 0;
+    this.onCheckDebounce();
+  }
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
