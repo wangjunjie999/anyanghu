@@ -63,7 +63,7 @@ const Hero = () => {
       </div>
 
       <div
-        className="enter-up absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center text-[hsl(40_25%_94%/0.7)]"
+        className="enter-up absolute bottom-8 inset-x-0 z-20 flex flex-col items-center text-[hsl(40_25%_94%/0.7)] pointer-events-none"
         style={{ animationDelay: "1800ms" }}
         aria-hidden
       >
