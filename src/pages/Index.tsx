@@ -8,7 +8,8 @@ import SEO from "@/components/SEO";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
 import heroImage from "@/assets/hero-architecture.jpg";
-import giftImage from "@/assets/project-1.jpg";
+import giftAsset from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
+const giftImage = giftAsset.url;
 
 const Index = () => {
   const jsonLd = [
@@ -56,7 +57,7 @@ const Index = () => {
                 src={giftImage}
                 alt="安阳湖橄榄油礼盒"
                 loading="lazy"
-                className="w-full h-[60vh] object-cover"
+                className="w-full h-[60vh] object-contain bg-muted p-6"
               />
             </Reveal>
             <Reveal variant="fade-up" delay={120}>

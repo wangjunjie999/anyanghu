@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import gift1 from "@/assets/project-1.jpg";
-import olives from "@/assets/project-2.jpg";
-import workshop from "@/assets/project-3.jpg";
+import giftCoratina from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
+import giftClassic from "@/assets/products/gift-classic-500mlx2.jpg.asset.json";
+import coratinaGlass500 from "@/assets/products/coratina-glass-500ml.jpg.asset.json";
+import classicGlass500 from "@/assets/products/classic-glass-500ml.jpg.asset.json";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
 import CircularGallery from "@/components/CircularGallery";
@@ -10,25 +11,25 @@ import { useTheme } from "@/components/ThemeProvider";
 
 const products = [
   {
-    image: gift1,
+    image: giftCoratina.url,
     title: "科拉蒂高端礼盒系列",
     series: "PREMIUM GIFT BOX",
     specs: ["规格：500ml × 2 / 1L × 2", "酸度：≤ 0.5%", "橄榄多酚：368.67 mg/kg", "品种：科拉蒂单品种橄榄果"],
   },
   {
-    image: olives,
+    image: giftClassic.url,
     title: "经典款礼盒系列",
     series: "CLASSIC GIFT BOX",
     specs: ["规格：500ml × 2 / 1L × 2", "酸度：≤ 0.5%", "品种：奇迹、皮瓜尔、皮削利、阿尔波萨纳混合"],
   },
   {
-    image: workshop,
+    image: coratinaGlass500.url,
     title: "科拉蒂单品种橄榄油",
     series: "SINGLE VARIETAL",
     specs: ["科拉蒂单品种橄榄果冷榨", "保留高多酚天然营养", "适合凉拌、蘸面包、淋汤"],
   },
   {
-    image: gift1,
+    image: classicGlass500.url,
     title: "特级初榨橄榄油瓶装系列",
     series: "EVERYDAY EVOO",
     specs: ["家庭日常用油", "低温物理冷榨", "自然清香 · 健康轻爽"],
@@ -91,7 +92,7 @@ const Portfolio = () => {
                     src={p.image}
                     alt={p.title}
                     loading="lazy"
-                    className="w-full h-[55vh] object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-[55vh] object-contain p-6 transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   <GradualBlur position="bottom" height="3rem" strength={1} divCount={2} curve="bezier" zIndex={2} />

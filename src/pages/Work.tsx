@@ -5,7 +5,16 @@ import CircularGallery from "@/components/CircularGallery";
 import { useTheme } from "@/components/ThemeProvider";
 import gift from "@/assets/project-1.jpg";
 import olives from "@/assets/project-2.jpg";
-import workshop from "@/assets/project-3.jpg";
+import giftCoratina from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
+import giftClassic from "@/assets/products/gift-classic-500mlx2.jpg.asset.json";
+import coratinaGlass125 from "@/assets/products/coratina-glass-125ml.jpg.asset.json";
+import coratinaGlass500 from "@/assets/products/coratina-glass-500ml.jpg.asset.json";
+import coratinaTin500 from "@/assets/products/coratina-tin-500ml.jpg.asset.json";
+import coratinaTin1000 from "@/assets/products/coratina-tin-1000ml.jpg.asset.json";
+import classicGlass125 from "@/assets/products/classic-glass-125ml.jpg.asset.json";
+import classicGlass500 from "@/assets/products/classic-glass-500ml.jpg.asset.json";
+import classicTin500 from "@/assets/products/classic-tin-500ml.jpg.asset.json";
+import classicTin1000 from "@/assets/products/classic-tin-1000ml.jpg.asset.json";
 
 const Work = () => {
   const [activeCategory, setActiveCategory] = useState("全部");
@@ -25,7 +34,8 @@ const Work = () => {
   const galleryTextColor = isDark ? "hsl(40 30% 95%)" : "hsl(38 25% 22%)";
   const products = [
     {
-      image: gift,
+      image: giftCoratina.url,
+      product: true,
       title: "科拉蒂高端礼盒",
       location: "PREMIUM GIFT BOX",
       category: "礼盒",
@@ -34,7 +44,8 @@ const Work = () => {
       year: "酸度 ≤ 0.5%",
     },
     {
-      image: gift,
+      image: giftClassic.url,
+      product: true,
       title: "经典款礼盒",
       location: "CLASSIC GIFT BOX",
       category: "礼盒",
@@ -43,7 +54,8 @@ const Work = () => {
       year: "酸度 ≤ 0.5%",
     },
     {
-      image: olives,
+      image: coratinaGlass500.url,
+      product: true,
       title: "科拉蒂单品种橄榄油",
       location: "SINGLE VARIETAL",
       category: "单品种",
@@ -52,13 +64,74 @@ const Work = () => {
       year: "多酚 368.67 mg/kg",
     },
     {
-      image: workshop,
+      image: classicGlass500.url,
+      product: true,
       title: "特级初榨橄榄油瓶装",
       location: "EVERYDAY EVOO",
       category: "日常",
       description: "家庭日常用油，低温物理冷榨，自然清香轻爽。",
       area: "500ml / 1L",
       year: "酸度 ≤ 0.5%",
+    },
+    {
+      image: coratinaGlass125.url,
+      title: "科拉蒂 玻璃瓶 125ml",
+      location: "SINGLE VARIETAL · 125ML",
+      category: "单品种",
+      description: "小巧便携的尝鲜装，高多酚风味一试便知。",
+      area: "125ml",
+      year: "多酚 368.67 mg/kg",
+      product: true,
+    },
+    {
+      image: coratinaTin500.url,
+      title: "科拉蒂 马口铁 500ml",
+      location: "SINGLE VARIETAL · TIN",
+      category: "单品种",
+      description: "马口铁避光密封，更好守护多酚与鲜香。",
+      area: "500ml",
+      year: "多酚 368.67 mg/kg",
+      product: true,
+    },
+    {
+      image: coratinaTin1000.url,
+      title: "科拉蒂 马口铁 1000ml",
+      location: "SINGLE VARIETAL · TIN",
+      category: "单品种",
+      description: "大容量避光罐装，满足家庭长期健康用油。",
+      area: "1000ml",
+      year: "多酚 368.67 mg/kg",
+      product: true,
+    },
+    {
+      image: classicGlass125.url,
+      title: "经典款 125ml",
+      location: "EVERYDAY EVOO · 125ML",
+      category: "日常",
+      description: "小瓶装轻松入门，清香柔和日常百搭。",
+      area: "125ml",
+      year: "酸度 ≤ 0.5%",
+      product: true,
+    },
+    {
+      image: classicTin500.url,
+      title: "经典款 马口铁 500ml",
+      location: "EVERYDAY EVOO · TIN",
+      category: "日常",
+      description: "避光罐装锁住新鲜，适合日常烹饪凉拌。",
+      area: "500ml",
+      year: "酸度 ≤ 0.5%",
+      product: true,
+    },
+    {
+      image: classicTin1000.url,
+      title: "经典款 马口铁 1000ml",
+      location: "EVERYDAY EVOO · TIN",
+      category: "日常",
+      description: "家庭大容量装，低温冷榨的自然清香。",
+      area: "1000ml",
+      year: "酸度 ≤ 0.5%",
+      product: true,
     },
     {
       image: gift,
@@ -154,7 +227,7 @@ const Work = () => {
                       src={p.image}
                       alt={p.title}
                       loading="lazy"
-                      className="w-full h-[55vh] object-cover transition-transform duration-700 group-hover:scale-105"
+                      className={`w-full h-[55vh] ${p.product ? "object-contain p-6" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
                     />
                     <div className="absolute top-6 left-6 bg-background/90 backdrop-blur-sm px-4 py-2">
                       <span className="text-xs tracking-wider text-primary">{p.category}</span>
