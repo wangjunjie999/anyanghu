@@ -1,5 +1,8 @@
+import { useState } from "react";
 import Reveal from "@/components/Reveal";
 import InfiniteMenu from "@/components/InfiniteMenu";
+import { cn } from "@/lib/utils";
+
 import craft01 from "@/assets/craft-01.jpg";
 import craft02 from "@/assets/craft-02.jpg";
 import craft03 from "@/assets/craft-03.jpg";
@@ -54,7 +57,10 @@ const craftSteps = [
 ];
 
 const About = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
   return (
+
     <section id="about" className="py-32 bg-muted/40">
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
@@ -113,7 +119,7 @@ const About = () => {
                 </h3>
               </div>
               <p className="text-muted-foreground text-sm md:text-base max-w-md md:text-right">
-                拖动球体探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
+                拖动球体或点击下方步骤，探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
               </p>
             </div>
 
@@ -135,7 +141,7 @@ const About = () => {
                 className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_center,hsl(var(--accent)/0.14),transparent_70%)]"
               />
               <div className="absolute inset-0">
-                <InfiniteMenu items={craftSteps} />
+                <InfiniteMenu items={craftSteps} activeIndex={activeStep} onActiveIndexChange={setActiveStep} />
               </div>
             </div>
 
@@ -148,22 +154,45 @@ const About = () => {
               ))}
             </ol>
 
-            {/* 移动端可读流程概览 */}
+            {/* 步骤导航：点击切换球体展示的工序 */}
             <div className="mt-10 grid grid-cols-2 md:grid-cols-7 gap-3 md:gap-4">
               {craftSteps.map((step, i) => (
-                <div
+                <button
                   key={step.title}
-                  className="border-l-2 border-primary/40 pl-3 py-1"
+                  type="button"
+                  onClick={() => setActiveStep(i)}
+                  aria-current={activeStep === i ? "step" : undefined}
+                  className={cn(
+                    "group text-left border-l-2 pl-3 py-1 transition-colors duration-300",
+                    activeStep === i
+                      ? "border-primary"
+                      : "border-primary/25 hover:border-primary/60"
+                  )}
                 >
-                  <div className="text-minimal text-primary text-xs">
+                  <div
+                    className={cn(
+                      "text-minimal text-xs transition-colors duration-300",
+                      activeStep === i
+                        ? "text-primary"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
                     {String(i + 1).padStart(2, "0")}
                   </div>
-                  <div className="text-foreground text-sm md:text-base font-light mt-1">
+                  <div
+                    className={cn(
+                      "text-sm md:text-base font-light mt-1 transition-colors duration-300",
+                      activeStep === i
+                        ? "text-foreground"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
                     {step.title}
                   </div>
-                </div>
+                </button>
               ))}
             </div>
+
           </Reveal>
         </div>
       </div>

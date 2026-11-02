@@ -494,6 +494,24 @@ class ArcballControl {
   public snapDirection = vec3.fromValues(0, 0, -1);
   public snapTargetDirection: vec3 | null = null;
 
+  public selectionTarget: quat | null = null;
+  public isSelecting = false;
+  public selectionFrames = 0;
+
+  public setSelectionTarget(target: quat): void {
+    this.selectionTarget = quat.clone(target);
+    this.isSelecting = true;
+    this.selectionFrames = 0;
+  }
+
+  public clearSelectionTarget(): void {
+    this.selectionTarget = null;
+    this.isSelecting = false;
+    this.selectionFrames = 0;
+  }
+
+
+
   private pointerPos = vec2.create();
   private previousPointerPos = vec2.create();
   private _rotationVelocity = 0;
@@ -510,7 +528,9 @@ class ArcballControl {
       vec2.set(this.pointerPos, e.clientX, e.clientY);
       vec2.copy(this.previousPointerPos, this.pointerPos);
       this.isPointerDown = true;
+      this.clearSelectionTarget();
     });
+
     canvas.addEventListener('pointerup', () => {
       this.isPointerDown = false;
     });
@@ -556,7 +576,20 @@ class ArcballControl {
       const INTENSITY = 0.1 * timeScale;
       quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INTENSITY);
 
-      if (this.snapTargetDirection) {
+      if (this.selectionTarget) {
+        const SELECT_INTENSITY = Math.min(0.4, 0.1 * timeScale);
+        quat.slerp(this.orientation, this.orientation, this.selectionTarget, SELECT_INTENSITY);
+        quat.normalize(this.orientation, this.orientation);
+        this.selectionFrames += 1;
+
+        if (
+          Math.abs(quat.dot(this.orientation, this.selectionTarget)) > 0.9998 ||
+          this.selectionFrames > 180
+        ) {
+          quat.copy(this.orientation, this.selectionTarget);
+          this.clearSelectionTarget();
+        }
+      } else if (this.snapTargetDirection) {
         const SNAPPING_INTENSITY = 0.2;
         const a = this.snapTargetDirection;
         const b = this.snapDirection;
@@ -566,6 +599,7 @@ class ArcballControl {
         this.quatFromVectors(a, b, snapRotation, angleFactor);
       }
     }
+
 
     const combinedQuat = quat.multiply(quat.create(), snapRotation, this.pointerRotation);
     this.orientation = quat.multiply(quat.create(), combinedQuat, this.orientation);
@@ -999,7 +1033,11 @@ class InfiniteGridMenu {
     let damping = 5 / timeScale;
     let cameraTargetZ = 3 * this.scaleFactor;
 
-    const isMoving = this.control.isPointerDown || Math.abs(this.smoothRotationVelocity) > 0.01;
+    const isMoving =
+      this.control.isPointerDown ||
+      this.control.isSelecting ||
+      Math.abs(this.smoothRotationVelocity) > 0.01;
+
 
     if (isMoving !== this.movementActive) {
       this.movementActive = isMoving;
@@ -1021,7 +1059,27 @@ class InfiniteGridMenu {
     this.updateCameraMatrix();
   }
 
+  /**
+   * Rotate the sphere so the disc of the given item faces the viewer.
+   * Item i is rendered by instance i (shader: vInstanceId % uItemCount).
+   */
+  public selectItem(index: number): void {
+    const itemCount = this.items.length;
+    if (!itemCount) return;
+    const itemIndex = ((Math.round(index) % itemCount) + itemCount) % itemCount;
+    const modelPos = this.instancePositions[itemIndex];
+    if (!modelPos) return;
+
+    const worldPos = vec3.normalize(
+      vec3.create(),
+      vec3.transformQuat(vec3.create(), modelPos, this.control.orientation)
+    );
+    const rotation = quat.rotationTo(quat.create(), worldPos, this.control.snapDirection);
+    this.control.setSelectionTarget(quat.multiply(quat.create(), rotation, this.control.orientation));
+  }
+
   private findNearestVertexIndex(): number {
+
     const n = this.control.snapDirection;
     const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
     const nt = vec3.transformQuat(vec3.create(), n, inversOrientation);
@@ -1056,12 +1114,26 @@ const defaultItems: MenuItem[] = [
 interface InfiniteMenuProps {
   items?: MenuItem[];
   scale?: number;
+  /** Controlled index of the item facing the viewer. */
+  activeIndex?: number | null;
+  /** Fires when the sphere lands on a different item (drag or programmatic selection). */
+  onActiveIndexChange?: (index: number) => void;
 }
 
-const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
+const InfiniteMenu: FC<InfiniteMenuProps> = ({
+  items = [],
+  scale = 1.0,
+  activeIndex,
+  onActiveIndexChange
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null) as MutableRefObject<HTMLCanvasElement | null>;
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
   const [isMoving, setIsMoving] = useState<boolean>(false);
+  const sketchRef = useRef<InfiniteGridMenu | null>(null);
+  const reportedIndexRef = useRef<number>(-1);
+  const appliedIndexRef = useRef<number>(-1);
+  const onActiveIndexChangeRef = useRef(onActiveIndexChange);
+  onActiveIndexChangeRef.current = onActiveIndexChange;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1071,6 +1143,10 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
       if (!items.length) return;
       const itemIndex = index % items.length;
       setActiveItem(items[itemIndex]);
+      if (itemIndex !== reportedIndexRef.current) {
+        reportedIndexRef.current = itemIndex;
+        onActiveIndexChangeRef.current?.(itemIndex);
+      }
     };
 
     if (canvas) {
@@ -1082,6 +1158,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
         sk => sk.run(),
         scale
       );
+      sketchRef.current = sketch;
     }
 
     const handleResize = () => {
@@ -1095,8 +1172,18 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      sketchRef.current = null;
     };
   }, [items, scale]);
+
+  // External selection (clicking a step in the list) rotates the sphere to that item.
+  useEffect(() => {
+    if (activeIndex == null) return;
+    if (activeIndex === reportedIndexRef.current || activeIndex === appliedIndexRef.current) return;
+    appliedIndexRef.current = activeIndex;
+    sketchRef.current?.selectItem(activeIndex);
+  }, [activeIndex]);
+
 
   const handleButtonClick = () => {
     if (!activeItem?.link) return;
