@@ -3,7 +3,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import { Button } from "@/components/ui/button";
-import { prefersReducedMotion, useInViewOnce } from "@/hooks/use-motion";
+import { prefersReducedMotion, useInViewOnce, useMediaQuery, useReducedMotion } from "@/hooks/use-motion";
+import { useEffect, useLayoutEffect } from "react";
+import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
 
 import craft01 from "@/assets/craft-01.jpg";
@@ -59,7 +61,98 @@ const craftSteps = [
   },
 ];
 
+/** Desktop: section pins while vertical scroll drives the 7 cards horizontally. */
+const CraftPinned = () => {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [distance, setDistance] = useState(0);
+  const [active, setActive] = useState(0);
+  const n = craftSteps.length;
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const t = trackRef.current, v = viewportRef.current;
+      if (t && v) setDistance(Math.max(0, t.scrollWidth - v.clientWidth));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (trackRef.current) ro.observe(trackRef.current);
+    if (viewportRef.current) ro.observe(viewportRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  const { scrollYProgress } = useScroll({ target: outerRef, offset: ["start start", "end end"] });
+  const x = useTransform(scrollYProgress, (v) => -v * distance);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const i = Math.min(n - 1, Math.round(v * (n - 1)));
+    setActive((a) => (a === i ? a : i));
+  });
+
+  const goTo = (i: number) => {
+    const el = outerRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const range = el.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: top + (range * Math.max(0, Math.min(n - 1, i))) / (n - 1), behavior: "smooth" });
+  };
+
+  return (
+    <div ref={outerRef} style={{ height: `calc(100vh + ${distance}px)` }} className="relative">
+      <div className="sticky top-0 h-screen flex flex-col justify-center pt-16">
+        <div className="flex items-end justify-between gap-6 mb-8">
+          <div>
+            <h2 className="text-minimal text-primary mb-4">CRAFTSMANSHIP</h2>
+            <h3 className="font-serif text-5xl font-light text-architectural text-foreground">品质工艺 · 七步溯源</h3>
+          </div>
+          <div className="flex flex-col items-end gap-5">
+            <p className="text-muted-foreground text-base max-w-md text-right">
+              左右滑动或点击箭头，探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
+            </p>
+            <div className="flex gap-3">
+              <Button variant="outline" size="icon" className="rounded-full" aria-label="上一步" disabled={active === 0} onClick={() => goTo(active - 1)}>
+                <ChevronLeft aria-hidden />
+              </Button>
+              <Button variant="outline" size="icon" className="rounded-full" aria-label="下一步" disabled={active === n - 1} onClick={() => goTo(active + 1)}>
+                <ChevronRight aria-hidden />
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 mb-8">
+          <span className="text-minimal text-primary tabular-nums">{String(active + 1).padStart(2, "0")}</span>
+          <div className="relative flex-1 h-px bg-border overflow-hidden">
+            <motion.div className="absolute inset-0 bg-primary origin-left" style={{ scaleX: scrollYProgress }} />
+          </div>
+          <span className="text-minimal text-muted-foreground tabular-nums">{String(n).padStart(2, "0")}</span>
+        </div>
+        <div ref={viewportRef} className="overflow-hidden" aria-label="品质工艺七个步骤">
+          <motion.div ref={trackRef} style={{ x }} className="flex gap-6 will-change-transform">
+            {craftSteps.map((step, i) => (
+              <article key={step.title} aria-current={active === i ? "step" : undefined} className="shrink-0 w-[31%]">
+                <div className="aspect-[4/3] max-h-[42vh] overflow-hidden bg-muted">
+                  <img src={step.image} alt={step.title} loading="lazy" draggable={false} className="w-full h-full object-cover" />
+                </div>
+                <div className="pt-6 pr-2">
+                  <div className="flex items-baseline gap-3 mb-3">
+                    <span className="font-serif text-3xl font-light text-primary leading-none tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                    <h4 className="font-serif text-2xl font-light text-foreground">{step.title}</h4>
+                  </div>
+                  <p className="text-muted-foreground text-base leading-relaxed">{step.description}</p>
+                </div>
+              </article>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const About = () => {
+  const desktop = useMediaQuery("(min-width: 1024px)");
+  const reduced = useReducedMotion();
+  const pinned = desktop && !reduced;
   const [activeStep, setActiveStep] = useState(0);
   const [dragging, setDragging] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -171,6 +264,7 @@ const About = () => {
 
           {/* 下半部分：品质工艺横向时间线 */}
           <div className="mt-32 md:mt-40">
+            {pinned ? <CraftPinned /> : (<>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
               <Reveal>
                 <h2 className="text-minimal text-primary mb-4">CRAFTSMANSHIP</h2>
@@ -248,6 +342,7 @@ const About = () => {
 
             </div>
 
+            </>)}
             {/* SEO / 无障碍兜底列表 */}
             <ol className="sr-only">
               {craftSteps.map((step, i) => (
