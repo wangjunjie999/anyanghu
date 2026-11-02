@@ -54,27 +54,8 @@ const TextBlock = ({ s }: { s: Advantage }) => (
 );
 
 /* ---------- Desktop: sticky image, text blocks scroll past ---------- */
-const DesktopBlock = ({ s, i, onProgress }: { s: Advantage; i: number; onProgress: (i: number, p: MotionValue<number>) => void }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  onProgress(i, scrollYProgress);
-  const first = i === 0;
-  const last = i === advantages.length - 1;
-  const opacity = useTransform(
-    scrollYProgress,
-    [0.25, 0.4, 0.6, 0.75],
-    [first ? 1 : 0.3, 1, 1, last ? 1 : 0.3]
-  );
-  return (
-    <motion.div ref={ref} style={{ opacity }} className="min-h-[80vh] flex items-center">
-      <TextBlock s={s} />
-    </motion.div>
-  );
-};
-
-const StickyImage = ({ s, i, progress }: { s: Advantage; i: number; progress?: MotionValue<number> }) => {
-  const fallback = useRef(new (class { get() { return 1; } })()).current as unknown as MotionValue<number>;
-  const p = progress ?? fallback;
+const StickyImage = ({ s, i, progress }: { s: Advantage; i: number; progress: MotionValue<number> }) => {
+  const p = progress;
   const opacity = useTransform(p, [0.3, 0.45], [i === 0 ? 1 : 0, 1]);
   const scale = useTransform(p, [0.3, 0.5], [i === 0 ? 1 : 1.05, 1]);
   return (
@@ -91,22 +72,7 @@ const StickyImage = ({ s, i, progress }: { s: Advantage; i: number; progress?: M
 };
 
 const DesktopLayout = () => {
-  const progresses = useRef<MotionValue<number>[]>([]);
-  const track = (i: number, p: MotionValue<number>) => { progresses.current[i] = p; };
-  // Pre-create progresses by rendering blocks first is not possible with hooks order; use per-block refs instead.
-  return <DesktopInner track={track} progresses={progresses} />;
-};
-
-const DesktopInner = ({
-  track,
-  progresses,
-}: {
-  track: (i: number, p: MotionValue<number>) => void;
-  progresses: React.MutableRefObject<MotionValue<number>[]>;
-}) => {
   const refs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-  void track;
-  void progresses;
   const scrolls = [
     useScroll({ target: refs[0], offset: ["start end", "end start"] }).scrollYProgress,
     useScroll({ target: refs[1], offset: ["start end", "end start"] }).scrollYProgress,
