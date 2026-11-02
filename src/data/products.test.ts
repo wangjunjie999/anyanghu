@@ -1,3 +1,4 @@
+// @ts-ignore Bun's test module is provided by the test runner, not the browser app.
 import { describe, expect, test } from "bun:test";
 import { products, homepageShowcases, parseProductSeries } from "./products";
 
