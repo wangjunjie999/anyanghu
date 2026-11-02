@@ -1,5 +1,8 @@
+import { useState } from "react";
 import Reveal from "@/components/Reveal";
 import InfiniteMenu from "@/components/InfiniteMenu";
+import { cn } from "@/lib/utils";
+
 import craft01 from "@/assets/craft-01.jpg";
 import craft02 from "@/assets/craft-02.jpg";
 import craft03 from "@/assets/craft-03.jpg";
@@ -54,7 +57,10 @@ const craftSteps = [
 ];
 
 const About = () => {
+  const [activeStep, setActiveStep] = useState(0);
+
   return (
+
     <section id="about" className="py-32 bg-muted/40">
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto">
