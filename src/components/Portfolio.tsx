@@ -1,40 +1,13 @@
 import { useEffect, useState } from "react";
-import giftCoratina from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
-import giftClassic from "@/assets/products/gift-classic-500mlx2.jpg.asset.json";
-import coratinaGlass500 from "@/assets/products/coratina-glass-500ml.jpg.asset.json";
-import classicGlass500 from "@/assets/products/classic-glass-500ml.jpg.asset.json";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { homepageShowcases } from "@/data/products";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
 import CircularGallery from "@/components/CircularGallery";
 import ScrollFloat from "@/components/ScrollFloat";
 import { useTheme } from "@/components/ThemeProvider";
-
-const products = [
-  {
-    image: giftCoratina.url,
-    title: "科拉蒂高端礼盒系列",
-    series: "PREMIUM GIFT BOX",
-    specs: ["规格：500ml × 2 / 1L × 2", "酸度：≤ 0.5%", "橄榄多酚：368.67 mg/kg", "品种：科拉蒂单品种橄榄果"],
-  },
-  {
-    image: giftClassic.url,
-    title: "经典款礼盒系列",
-    series: "CLASSIC GIFT BOX",
-    specs: ["规格：500ml × 2 / 1L × 2", "酸度：≤ 0.5%", "品种：奇迹、皮瓜尔、皮削利、阿尔波萨纳混合"],
-  },
-  {
-    image: coratinaGlass500.url,
-    title: "科拉蒂单品种橄榄油",
-    series: "SINGLE VARIETAL",
-    specs: ["科拉蒂单品种橄榄果冷榨", "保留高多酚天然营养", "适合凉拌、蘸面包、淋汤"],
-  },
-  {
-    image: classicGlass500.url,
-    title: "特级初榨橄榄油瓶装系列",
-    series: "EVERYDAY EVOO",
-    specs: ["家庭日常用油", "低温物理冷榨", "自然清香 · 健康轻爽"],
-  },
-];
 
 const Portfolio = () => {
   const { theme } = useTheme();
@@ -50,7 +23,7 @@ const Portfolio = () => {
     mq.addEventListener("change", update);
     return () => { obs.disconnect(); mq.removeEventListener("change", update); };
   }, [theme]);
-  const galleryTextColor = isDark ? "hsl(40 30% 95%)" : "hsl(38 25% 22%)";
+  const galleryTextColor = typeof document === "undefined" ? "" : getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim();
   return (
     <section id="work" className="py-32 bg-background">
       <div className="container mx-auto px-6">
@@ -75,9 +48,9 @@ const Portfolio = () => {
           {/* 弧形产品轮播 */}
           <div className="relative h-[380px] md:h-[560px] mb-24 -mx-6 md:-mx-12">
             <CircularGallery
-              items={products.map((p) => ({ image: p.image, text: p.title }))}
+              items={homepageShowcases.map((p) => ({ image: p.image, text: p.name }))}
               bend={3}
-              textColor={galleryTextColor}
+              textColor={`hsl(${galleryTextColor})`}
               borderRadius={0.05}
               scrollEase={0.04}
               font="500 22px 'Noto Serif SC', serif"
@@ -85,12 +58,12 @@ const Portfolio = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-x-12 gap-y-24">
-            {products.map((p, i) => (
+            {homepageShowcases.map((p, i) => (
               <Reveal key={i} variant="fade-scale" delay={(i % 2) * 120} className="group">
-                <div className="relative overflow-hidden bg-muted">
+                <div className="relative overflow-hidden bg-product-photo">
                   <img
                     src={p.image}
-                    alt={p.title}
+                    alt={p.name}
                     loading="lazy"
                     className="w-full h-[55vh] object-contain p-6 transition-transform duration-700 group-hover:scale-105"
                   />
@@ -99,15 +72,18 @@ const Portfolio = () => {
                 </div>
 
                 <div className="mt-8 space-y-4">
-                  <p className="text-minimal text-primary">{p.series}</p>
+                  <p className="text-minimal text-primary">{p.english}</p>
                   <h4 className="font-serif text-2xl md:text-3xl font-light text-architectural text-foreground">
-                    {p.title}
+                    {p.name}
                   </h4>
                   <ul className="text-muted-foreground space-y-1 text-sm leading-relaxed">
-                    {p.specs.map((s) => (
+                    {[`规格：${p.spec}`, ...p.params].map((s) => (
                       <li key={s}>· {s}</li>
                     ))}
                   </ul>
+                  <Button asChild variant="link" className="px-0 rounded-none">
+                    <Link to={`/work?series=${p.series}`} aria-label={`查看产品：${p.name}`}>查看产品 <ArrowRight aria-hidden="true" /></Link>
+                  </Button>
                 </div>
               </Reveal>
             ))}
