@@ -572,7 +572,20 @@ class ArcballControl {
       const INTENSITY = 0.1 * timeScale;
       quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INTENSITY);
 
-      if (this.snapTargetDirection) {
+      if (this.selectionTarget) {
+        const SELECT_INTENSITY = Math.min(0.4, 0.1 * timeScale);
+        quat.slerp(this.orientation, this.orientation, this.selectionTarget, SELECT_INTENSITY);
+        quat.normalize(this.orientation, this.orientation);
+        this.selectionFrames += 1;
+
+        if (
+          Math.abs(quat.dot(this.orientation, this.selectionTarget)) > 0.9998 ||
+          this.selectionFrames > 180
+        ) {
+          quat.copy(this.orientation, this.selectionTarget);
+          this.clearSelectionTarget();
+        }
+      } else if (this.snapTargetDirection) {
         const SNAPPING_INTENSITY = 0.2;
         const a = this.snapTargetDirection;
         const b = this.snapDirection;
@@ -582,6 +595,7 @@ class ArcballControl {
         this.quatFromVectors(a, b, snapRotation, angleFactor);
       }
     }
+
 
     const combinedQuat = quat.multiply(quat.create(), snapRotation, this.pointerRotation);
     this.orientation = quat.multiply(quat.create(), combinedQuat, this.orientation);
