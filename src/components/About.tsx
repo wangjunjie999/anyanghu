@@ -1,9 +1,6 @@
-import { useRef, useState, type PointerEvent } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import Reveal from "@/components/Reveal";
-import CountUp from "@/components/CountUp";
-import { Button } from "@/components/ui/button";
-import { prefersReducedMotion, useInViewOnce } from "@/hooks/use-motion";
+import InfiniteMenu from "@/components/InfiniteMenu";
 import { cn } from "@/lib/utils";
 
 import craft01 from "@/assets/craft-01.jpg";
@@ -61,63 +58,6 @@ const craftSteps = [
 
 const About = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [dragging, setDragging] = useState(false);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [inViewRef, tracksShown] = useInViewOnce<HTMLDivElement>(0.1);
-  const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
-
-  const cardsOf = () => Array.from(trackRef.current?.children ?? []) as HTMLElement[];
-
-  const scrollToStep = (i: number) => {
-    const track = trackRef.current;
-    const card = cardsOf()[i];
-    if (!track || !card) return;
-    track.scrollTo({ left: card.offsetLeft - 24, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-  };
-
-  const onTrackScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
-    if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) {
-      setActiveStep(craftSteps.length - 1);
-      return;
-    }
-    const cards = cardsOf();
-    let best = 0;
-    let dist = Infinity;
-    cards.forEach((c, i) => {
-      const d = Math.abs(c.offsetLeft - 24 - track.scrollLeft);
-      if (d < dist) { dist = d; best = i; }
-    });
-    setActiveStep(best);
-  };
-
-  // 鼠标拖动（触摸使用原生滑动）
-  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType !== "mouse" || !trackRef.current) return;
-    drag.current = { x: e.clientX, left: trackRef.current.scrollLeft, moved: false };
-  };
-  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
-    const d = drag.current;
-    const track = trackRef.current;
-    if (!d || !track) return;
-    const dx = e.clientX - d.x;
-    if (!d.moved && Math.abs(dx) > 4) {
-      d.moved = true;
-      setDragging(true);
-      track.setPointerCapture(e.pointerId);
-    }
-    if (d.moved) track.scrollLeft = d.left - dx;
-  };
-  const endDrag = () => {
-    if (!drag.current) return;
-    const moved = drag.current.moved;
-    drag.current = null;
-    setDragging(false);
-    if (moved) requestAnimationFrame(() => scrollToStep(activeStepRef.current));
-  };
-  const activeStepRef = useRef(0);
-  activeStepRef.current = activeStep;
 
   return (
 
@@ -149,7 +89,7 @@ const About = () => {
               <div className="grid grid-cols-2 gap-8 pb-8 border-b border-border">
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">成立时间</h4>
-                  <p className="font-serif text-3xl text-foreground font-light"><CountUp from={2000} to={2017} /></p>
+                  <p className="font-serif text-3xl text-foreground font-light">2017</p>
                 </div>
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">荣誉资质</h4>
@@ -169,83 +109,40 @@ const About = () => {
             </div>
           </div>
 
-          {/* 下半部分：品质工艺横向时间线 */}
-          <div className="mt-32 md:mt-40">
+          {/* 下半部分：品质工艺球体探索 */}
+          <Reveal as="div" variant="fade-up" className="mt-32 md:mt-40">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
-              <Reveal>
+              <div>
                 <h2 className="text-minimal text-primary mb-4">CRAFTSMANSHIP</h2>
                 <h3 className="font-serif text-3xl md:text-5xl font-light text-architectural text-foreground">
                   品质工艺 · 七步溯源
                 </h3>
-              </Reveal>
-              <Reveal delay={100} className="flex flex-col md:items-end gap-5">
-                <p className="text-muted-foreground text-sm md:text-base max-w-md md:text-right">
-                  左右滑动或点击箭头，探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
-                </p>
-                <div className="flex gap-3">
-                  <Button variant="outline" size="icon" className="rounded-full" aria-label="上一步" disabled={activeStep === 0} onClick={() => scrollToStep(activeStep - 1)}>
-                    <ChevronLeft aria-hidden />
-                  </Button>
-                  <Button variant="outline" size="icon" className="rounded-full" aria-label="下一步" disabled={activeStep === craftSteps.length - 1} onClick={() => scrollToStep(activeStep + 1)}>
-                    <ChevronRight aria-hidden />
-                  </Button>
-                </div>
-              </Reveal>
-            </div>
-
-            {/* 步骤进度条 */}
-            <div className="flex items-center gap-4 mb-8">
-              <span className="text-minimal text-primary tabular-nums">{String(activeStep + 1).padStart(2, "0")}</span>
-              <div className="relative flex-1 h-px bg-border overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-primary origin-left transition-transform duration-500 ease-out motion-reduce:transition-none"
-                  style={{ transform: `scaleX(${(activeStep + 1) / craftSteps.length})` }}
-                />
               </div>
-              <span className="text-minimal text-muted-foreground tabular-nums">{String(craftSteps.length).padStart(2, "0")}</span>
+              <p className="text-muted-foreground text-sm md:text-base max-w-md md:text-right">
+                拖动球体或点击下方步骤，探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
+              </p>
             </div>
 
-            <div ref={inViewRef}>
             <div
-              ref={trackRef}
-              onScroll={onTrackScroll}
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={endDrag}
-              onPointerCancel={endDrag}
-              className={cn(
-                "relative -mx-6 px-6 scroll-px-6 flex gap-5 md:gap-6 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain",
-                dragging ? "cursor-grabbing select-none snap-none" : "cursor-grab snap-x snap-mandatory"
-              )}
-              aria-label="品质工艺七个步骤"
+              className="relative w-full h-[520px] md:h-[640px]"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(180deg,transparent 0%,black 12%,black 88%,transparent 100%)",
+                maskImage:
+                  "linear-gradient(180deg,transparent 0%,black 12%,black 88%,transparent 100%)",
+              }}
             >
-              {craftSteps.map((step, i) => (
-                <div
-                  key={step.title}
-                  style={{ transitionDelay: tracksShown ? `${Math.min(i, 4) * 80}ms` : undefined }}
-                  className={cn(
-                    "snap-start shrink-0 w-[80%] sm:w-[46%] lg:w-[31%] transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-                    tracksShown ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"
-                  )}
-                >
-                  <article aria-current={activeStep === i ? "step" : undefined}>
-                    <div className="aspect-[4/3] overflow-hidden bg-muted">
-                      <img src={step.image} alt={step.title} loading="lazy" draggable={false} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="pt-6 pr-2">
-                      <div className="flex items-baseline gap-3 mb-3">
-                        <span className="font-serif text-3xl font-light text-primary leading-none tabular-nums">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <h4 className="font-serif text-xl md:text-2xl font-light text-foreground">{step.title}</h4>
-                      </div>
-                      <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{step.description}</p>
-                    </div>
-                  </article>
-                </div>
-              ))}
-            </div>
-
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary)/0.06)_30%,hsl(var(--accent)/0.10)_55%,hsl(var(--primary)/0.06)_75%,transparent_100%)]"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_center,hsl(var(--accent)/0.14),transparent_70%)]"
+              />
+              <div className="absolute inset-0">
+                <InfiniteMenu items={craftSteps} activeIndex={activeStep} onActiveIndexChange={setActiveStep} />
+              </div>
             </div>
 
             {/* SEO / 无障碍兜底列表 */}
@@ -256,7 +153,47 @@ const About = () => {
                 </li>
               ))}
             </ol>
-          </div>
+
+            {/* 步骤导航：点击切换球体展示的工序 */}
+            <div className="mt-10 grid grid-cols-2 md:grid-cols-7 gap-3 md:gap-4">
+              {craftSteps.map((step, i) => (
+                <button
+                  key={step.title}
+                  type="button"
+                  onClick={() => setActiveStep(i)}
+                  aria-current={activeStep === i ? "step" : undefined}
+                  className={cn(
+                    "group text-left border-l-2 pl-3 py-1 transition-colors duration-300",
+                    activeStep === i
+                      ? "border-primary"
+                      : "border-primary/25 hover:border-primary/60"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "text-minimal text-xs transition-colors duration-300",
+                      activeStep === i
+                        ? "text-primary"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                  <div
+                    className={cn(
+                      "text-sm md:text-base font-light mt-1 transition-colors duration-300",
+                      activeStep === i
+                        ? "text-foreground"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
+                    {step.title}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+          </Reveal>
         </div>
       </div>
     </section>

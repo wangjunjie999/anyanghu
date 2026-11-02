@@ -1,8 +1,7 @@
-import { ReactNode, ElementType } from "react";
+import { useEffect, useRef, useState, ReactNode, ElementType } from "react";
 import { cn } from "@/lib/utils";
-import { useInViewOnce } from "@/hooks/use-motion";
 
-type Variant = "fade-up" | "fade-scale" | "fade";
+type Variant = "fade-up" | "fade-rotate" | "fade-scale";
 
 interface RevealProps {
   children: ReactNode;
@@ -11,24 +10,57 @@ interface RevealProps {
   as?: ElementType;
   className?: string;
   threshold?: number;
+  bidirectional?: boolean;
 }
 
 const initialClass: Record<Variant, string> = {
-  "fade-up": "opacity-0 translate-y-5",
-  "fade-scale": "opacity-0 translate-y-3 scale-[0.98]",
-  fade: "opacity-0",
+  "fade-up": "opacity-0 translate-y-8",
+  "fade-rotate": "opacity-0 -rotate-3 translate-y-4",
+  "fade-scale": "opacity-0 scale-[0.96]",
 };
 
-/** Plays once when entering the viewport (AnimatedContent / FadeContent style). */
-const Reveal = ({ children, variant = "fade-up", delay = 0, as: Tag = "div", className, threshold = 0.15 }: RevealProps) => {
-  const [ref, shown] = useInViewOnce<HTMLElement>(threshold);
+const Reveal = ({
+  children,
+  variant = "fade-up",
+  delay = 0,
+  as: Tag = "div",
+  className,
+  threshold = 0.15,
+  bidirectional = true,
+}: RevealProps) => {
+  const ref = useRef<HTMLElement | null>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setShown(true);
+      return;
+    }
+    const node = ref.current;
+    if (!node) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          if (!bidirectional) io.disconnect();
+        } else if (bidirectional) {
+          setShown(false);
+        }
+      },
+      { threshold }
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, [threshold, bidirectional]);
+
   return (
     <Tag
-      ref={ref}
-      style={{ transitionDelay: shown ? `${delay}ms` : undefined }}
+      ref={ref as any}
+      style={{ transitionDelay: shown ? `${delay}ms` : "0ms" }}
       className={cn(
-        "transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-        shown ? "opacity-100 translate-y-0 scale-100" : initialClass[variant],
+        "transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform",
+        shown ? "opacity-100 translate-y-0 translate-x-0 rotate-0 scale-100" : initialClass[variant],
         className
       )}
     >

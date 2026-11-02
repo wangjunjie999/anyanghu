@@ -1,3 +1,3 @@
 # Architecture rules
 - Keep the real product catalog, series metadata and derived homepage showcases in `src/data/products.ts`; pages consume this module so official names and parameters cannot drift between displays.
-- Keep catalog rule tests beside the data module and run them with `bun test src/data/products.test.ts`; these protect official names, series counts, specifications and parameters without testing presentation.- Site motion uses the lightweight one-shot primitives (`Reveal`, `SplitText`, `CountUp`, `TiltCard`, `ParallaxBg`, `src/hooks/use-motion.ts`): transform/opacity only, play once, honor prefers-reduced-motion; WebGL (CircularGallery) is desktop-only — keeps the brand calm and phones fast.
+- Keep catalog rule tests beside the data module and run them with `bun test src/data/products.test.ts`; these protect official names, series counts, specifications and parameters without testing presentation.
