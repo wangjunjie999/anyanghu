@@ -53,7 +53,7 @@ const Portfolio = () => {
               textColor={`hsl(${galleryTextColor})`}
               borderRadius={0.05}
               scrollEase={0.04}
-              font="500 22px 'Noto Serif SC', serif"
+              font="400 22px 'Noto Serif SC', serif"
             />
           </div>
 
