@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type PointerEvent } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
@@ -71,7 +71,7 @@ const About = () => {
     const track = trackRef.current;
     const card = cardsOf()[i];
     if (!track || !card) return;
-    track.scrollTo({ left: card.offsetLeft - track.offsetLeft - 24, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    track.scrollTo({ left: card.offsetLeft - 24, behavior: prefersReducedMotion() ? "auto" : "smooth" });
   };
 
   const onTrackScroll = () => {
@@ -85,18 +85,18 @@ const About = () => {
     let best = 0;
     let dist = Infinity;
     cards.forEach((c, i) => {
-      const d = Math.abs(c.offsetLeft - track.offsetLeft - 24 - track.scrollLeft);
+      const d = Math.abs(c.offsetLeft - 24 - track.scrollLeft);
       if (d < dist) { dist = d; best = i; }
     });
     setActiveStep(best);
   };
 
   // 鼠标拖动（触摸使用原生滑动）
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== "mouse" || !trackRef.current) return;
     drag.current = { x: e.clientX, left: trackRef.current.scrollLeft, moved: false };
   };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const d = drag.current;
     const track = trackRef.current;
     if (!d || !track) return;
@@ -148,7 +148,7 @@ const About = () => {
               <div className="grid grid-cols-2 gap-8 pb-8 border-b border-border">
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">成立时间</h4>
-                  <p className="font-serif text-3xl text-foreground font-light">2017</p>
+                  <p className="font-serif text-3xl text-foreground font-light"><CountUp from={2000} to={2017} /></p>
                 </div>
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">荣誉资质</h4>
@@ -212,7 +212,7 @@ const About = () => {
               onPointerUp={endDrag}
               onPointerCancel={endDrag}
               className={cn(
-                "-mx-6 px-6 flex gap-5 md:gap-6 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain",
+                "relative -mx-6 px-6 flex gap-5 md:gap-6 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain",
                 dragging ? "cursor-grabbing select-none snap-none" : "cursor-grab snap-x snap-mandatory"
               )}
               aria-label="品质工艺七个步骤"
