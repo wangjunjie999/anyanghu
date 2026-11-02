@@ -3,8 +3,8 @@ import Navigation from "@/components/Navigation";
 import SEO from "@/components/SEO";
 import CircularGallery from "@/components/CircularGallery";
 import { useTheme } from "@/components/ThemeProvider";
-import gift from "@/assets/project-1.jpg";
-import olives from "@/assets/project-2.jpg";
+import giftClassic1L from "@/assets/products/gift-classic-1lx2.jpg.asset.json";
+import giftCoratina1L from "@/assets/products/gift-coratina-1lx2.jpg.asset.json";
 import giftCoratina from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
 import giftClassic from "@/assets/products/gift-classic-500mlx2.jpg.asset.json";
 import coratinaGlass125 from "@/assets/products/coratina-glass-125ml.jpg.asset.json";
@@ -134,7 +134,8 @@ const Work = () => {
       product: true,
     },
     {
-      image: gift,
+      image: giftClassic1L.url,
+      product: true,
       title: "企业定制礼盒",
       location: "CORPORATE CUSTOM",
       category: "礼盒",
@@ -143,7 +144,8 @@ const Work = () => {
       year: "—",
     },
     {
-      image: olives,
+      image: giftCoratina1L.url,
+      product: true,
       title: "节日限定礼盒",
       location: "SEASONAL EDITION",
       category: "礼盒",

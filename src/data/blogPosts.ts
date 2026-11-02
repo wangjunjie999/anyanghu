@@ -8,11 +8,17 @@ export interface BlogPost {
   readTime: string;
   category: string;
   image: string;
+  /** Optional article photo gallery shown below the content (image URLs). */
+  gallery?: string[];
 }
 
 import blogPour from "@/assets/blog-sustainable-architecture.jpg";
 import blogTable from "@/assets/blog-minimalist-living.jpg";
 import blogGrove from "@/assets/blog-urban-planning.jpg";
+import baseAerial1 from "@/assets/base/base-aerial-1.jpg.asset.json";
+import baseAerial2 from "@/assets/base/base-aerial-2.jpg.asset.json";
+import baseLake from "@/assets/base/base-lake.jpg.asset.json";
+import basePark from "@/assets/base/base-industrial-park.jpg.asset.json";
 
 export const blogPosts: BlogPost[] = [
   {
@@ -24,7 +30,8 @@ export const blogPosts: BlogPost[] = [
     date: "2024-10-20",
     readTime: "4 分钟",
     category: "基地动态",
-    image: blogGrove,
+    image: baseAerial1.url,
+    gallery: [baseAerial2.url, baseLake.url, basePark.url],
   },
   {
     id: "what-is-evoo",

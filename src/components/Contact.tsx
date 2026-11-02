@@ -1,3 +1,6 @@
+import qrWechat from "@/assets/qr/qr-wechat.jpg.asset.json";
+import qrXiaohongshu from "@/assets/qr/qr-xiaohongshu.jpg.asset.json";
+import qrDouyin from "@/assets/qr/qr-douyin.jpg.asset.json";
 const Contact = () => {
   return (
     <section id="contact" className="py-32 bg-background">
@@ -57,7 +60,20 @@ const Contact = () => {
                   我们为节日团购、企业福利、礼盒定制、地方特色礼品提供一站式合作方案，
                   也欢迎区域代理、商超与渠道合作伙伴洽谈。
                 </p>
-                <p className="text-sm">二维码与电商链接将陆续上线，敬请期待。</p>
+                <div className="grid grid-cols-3 gap-4 max-w-md pt-2">
+                  {[
+                    { src: qrWechat.url, label: "微信公众号" },
+                    { src: qrXiaohongshu.url, label: "小红书" },
+                    { src: qrDouyin.url, label: "抖音" },
+                  ].map((q) => (
+                    <figure key={q.label} className="text-center">
+                      <div className="bg-card border border-border p-2">
+                        <img src={q.src} alt={`${q.label}二维码`} loading="lazy" className="w-full aspect-square object-contain" />
+                      </div>
+                      <figcaption className="mt-2 text-sm text-foreground">{q.label}</figcaption>
+                    </figure>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

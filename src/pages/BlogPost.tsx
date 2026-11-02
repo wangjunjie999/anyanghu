@@ -124,6 +124,21 @@ const BlogPost = () => {
               />
             </div>
             
+            {post.gallery && post.gallery.length > 0 && (
+              <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {post.gallery.map((src, i) => (
+                  <div key={src} className="overflow-hidden bg-muted aspect-[4/3]">
+                    <img
+                      src={src}
+                      alt={`${post.title} 附图 ${i + 1}`}
+                      loading="lazy"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Author Info */}
             <div className="mt-16 pt-8 border-t border-border">
               <div className="flex items-center space-x-4">
