@@ -14,7 +14,7 @@ const Portfolio = () => {
           <div className="mb-16 md:mb-20">
             <h2 className="text-minimal text-primary mb-6">PRODUCTS</h2>
             <SplitText
-              as="p"
+              as="h2"
               text="产品中心"
               stagger={60}
               className="block font-serif text-4xl md:text-6xl font-light text-architectural text-foreground py-2"
