@@ -24,8 +24,9 @@ const isLayer = (el: HTMLElement) => {
 };
 
 const collectScenes = (): Scene[] => {
+  // 含 WebGL 画布的板块（品质工艺球体、产品弧形轮播）保持原有模块效果，不参与滚动联动
   const sections = Array.from(document.querySelectorAll<HTMLElement>("#root section")).filter(
-    (s) => !s.parentElement?.closest("section") && s.offsetHeight > 0
+    (s) => !s.parentElement?.closest("section") && s.offsetHeight > 0 && !s.querySelector("canvas")
   );
   return sections.map((section, i) => {
     const children = Array.from(section.children) as HTMLElement[];
