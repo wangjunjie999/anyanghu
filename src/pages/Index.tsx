@@ -6,7 +6,9 @@ import Portfolio from "@/components/Portfolio";
 import Contact from "@/components/Contact";
 import SEO from "@/components/SEO";
 import Reveal from "@/components/Reveal";
-import ParallaxBg from "@/components/ParallaxBg";
+import ParkWindow from "@/components/scroll/ParkWindow";
+import BrandStatement from "@/components/scroll/BrandStatement";
+import ScrollTitle from "@/components/scroll/ScrollTitle";
 import parkAsset from "@/assets/base/base-industrial-park.jpg.asset.json";
 const heroImage = parkAsset.url;
 import giftAsset from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
@@ -46,6 +48,7 @@ const Index = () => {
       />
       <Navigation />
       <Hero />
+      <BrandStatement />
       <Services />
       <About />
       <Portfolio />
@@ -63,12 +66,14 @@ const Index = () => {
               />
             </Reveal>
             <Reveal variant="fade-up" delay={120}>
+              <ScrollTitle>
               <h2 className="text-minimal text-primary mb-4">GIFT CUSTOMIZATION</h2>
               <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural text-foreground mb-8">
                 一份能走进日常三餐的
                 <br />
                 健康好礼
               </h3>
+              </ScrollTitle>
               <p className="text-muted-foreground leading-relaxed mb-6">
                 适合节日送礼、走亲访友、敬献父母长辈、商务客户礼赠、企业福利及地方特色礼品。
                 我们提供包装定制、Logo 印制、定向团购等灵活方案，让一瓶橄榄油承载心意。
@@ -85,23 +90,7 @@ const Index = () => {
       </section>
 
       {/* 产业园 / 文旅体验 */}
-      <section className="relative py-40 overflow-hidden">
-        <ParallaxBg src={heroImage} />
-        <div className="absolute inset-0 hero-overlay" />
-        <div className="relative container mx-auto px-6">
-          <div className="max-w-3xl text-[hsl(40_25%_94%)]">
-            <Reveal as="p" className="text-minimal text-accent mb-6">INDUSTRY · TOURISM · WELLNESS</Reveal>
-            <Reveal as="h3" delay={100} className="font-serif text-4xl md:text-5xl font-light text-architectural mb-8">
-              油橄榄大健康产业园
-            </Reveal>
-            <Reveal as="p" delay={200} className="text-[hsl(40_25%_94%/0.85)] leading-relaxed text-lg">
-              现代化榨油体验车间、科研与研学馆、展示展销馆、农旅融合空间，
-              未来打造集种植、加工、文旅、康养于一体的产业融合示范园，
-              让一颗橄榄果的旅程被看见、被体验。
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <ParkWindow src={heroImage} />
 
       <Contact />
     </div>
