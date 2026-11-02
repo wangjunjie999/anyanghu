@@ -6,7 +6,7 @@ import Portfolio from "@/components/Portfolio";
 import Contact from "@/components/Contact";
 import SEO from "@/components/SEO";
 import Reveal from "@/components/Reveal";
-import GradualBlur from "@/components/GradualBlur";
+import ParallaxBg from "@/components/ParallaxBg";
 import parkAsset from "@/assets/base/base-industrial-park.jpg.asset.json";
 const heroImage = parkAsset.url;
 import giftAsset from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
@@ -85,25 +85,22 @@ const Index = () => {
       </section>
 
       {/* 产业园 / 文旅体验 */}
-      <section
-        className="relative py-40 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
+      <section className="relative py-40 overflow-hidden">
+        <ParallaxBg src={heroImage} />
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative container mx-auto px-6">
           <div className="max-w-3xl text-[hsl(40_25%_94%)]">
-            <p className="text-minimal text-accent mb-6">INDUSTRY · TOURISM · WELLNESS</p>
-            <h3 className="font-serif text-4xl md:text-5xl font-light text-architectural mb-8">
+            <Reveal as="p" className="text-minimal text-accent mb-6">INDUSTRY · TOURISM · WELLNESS</Reveal>
+            <Reveal as="h3" delay={100} className="font-serif text-4xl md:text-5xl font-light text-architectural mb-8">
               油橄榄大健康产业园
-            </h3>
-            <p className="text-[hsl(40_25%_94%/0.85)] leading-relaxed text-lg">
+            </Reveal>
+            <Reveal as="p" delay={200} className="text-[hsl(40_25%_94%/0.85)] leading-relaxed text-lg">
               现代化榨油体验车间、科研与研学馆、展示展销馆、农旅融合空间，
               未来打造集种植、加工、文旅、康养于一体的产业融合示范园，
               让一颗橄榄果的旅程被看见、被体验。
-            </p>
+            </Reveal>
           </div>
         </div>
-        <GradualBlur position="bottom" height="6rem" strength={2} divCount={5} curve="bezier" animated="scroll" zIndex={5} />
       </section>
 
       <Contact />
