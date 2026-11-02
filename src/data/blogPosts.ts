@@ -19,6 +19,15 @@ import baseAerial1 from "@/assets/base/base-aerial-1.jpg.asset.json";
 import baseAerial2 from "@/assets/base/base-aerial-2.jpg.asset.json";
 import baseLake from "@/assets/base/base-lake.jpg.asset.json";
 import basePark from "@/assets/base/base-industrial-park.jpg.asset.json";
+import newsProcess1 from "@/assets/news/news-process-1.jpg.asset.json";
+import newsProcess2 from "@/assets/news/news-process-2.jpg.asset.json";
+import newsProcess3 from "@/assets/news/news-process-3.jpg.asset.json";
+import newsProcess4 from "@/assets/news/news-process-4.jpg.asset.json";
+import newsProcess5 from "@/assets/news/news-process-5.jpg.asset.json";
+import newsProcess6 from "@/assets/news/news-process-6.jpg.asset.json";
+import newsGift1 from "@/assets/news/news-gift-1.jpg.asset.json";
+import newsGift2 from "@/assets/news/news-gift-2.jpg.asset.json";
+import newsGift3 from "@/assets/news/news-gift-3.jpg.asset.json";
 
 export const blogPosts: BlogPost[] = [
   {
@@ -64,7 +73,8 @@ export const blogPosts: BlogPost[] = [
     date: "2024-07-05",
     readTime: "3 分钟",
     category: "礼盒场景",
-    image: blogPour,
+    image: newsGift1.url,
+    gallery: [newsGift2.url, newsGift3.url],
   },
   {
     id: "from-fruit-to-bottle",
@@ -75,6 +85,13 @@ export const blogPosts: BlogPost[] = [
     date: "2024-06-10",
     readTime: "6 分钟",
     category: "基地动态",
-    image: blogGrove,
+    image: newsProcess1.url,
+    gallery: [
+      newsProcess2.url,
+      newsProcess3.url,
+      newsProcess4.url,
+      newsProcess5.url,
+      newsProcess6.url,
+    ],
   },
 ];
