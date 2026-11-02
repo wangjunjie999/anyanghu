@@ -13,8 +13,11 @@ export interface BlogPost {
 }
 
 import blogPour from "@/assets/blog-sustainable-architecture.jpg";
-import blogTable from "@/assets/blog-minimalist-living.jpg";
-import blogGrove from "@/assets/blog-urban-planning.jpg";
+import newsCooking1 from "@/assets/news/news-cooking-1.jpg.asset.json";
+import newsCooking2 from "@/assets/news/news-cooking-2.jpg.asset.json";
+import newsCooking3 from "@/assets/news/news-cooking-3.jpg.asset.json";
+import newsCooking4 from "@/assets/news/news-cooking-4.jpg.asset.json";
+import newsCooking5 from "@/assets/news/news-cooking-5.jpg.asset.json";
 import baseAerial1 from "@/assets/base/base-aerial-1.jpg.asset.json";
 import baseAerial2 from "@/assets/base/base-aerial-2.jpg.asset.json";
 import baseLake from "@/assets/base/base-lake.jpg.asset.json";
@@ -62,7 +65,13 @@ export const blogPosts: BlogPost[] = [
     date: "2024-08-18",
     readTime: "4 分钟",
     category: "橄榄油知识",
-    image: blogTable,
+    image: newsCooking1.url,
+    gallery: [
+      newsCooking2.url,
+      newsCooking3.url,
+      newsCooking4.url,
+      newsCooking5.url,
+    ],
   },
   {
     id: "gift-scenarios",
