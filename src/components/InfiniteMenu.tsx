@@ -494,6 +494,20 @@ class ArcballControl {
   public snapDirection = vec3.fromValues(0, 0, -1);
   public snapTargetDirection: vec3 | null = null;
 
+  public selectionTarget: quat | null = null;
+  public isSelecting = false;
+
+  public setSelectionTarget(target: quat): void {
+    this.selectionTarget = quat.clone(target);
+    this.isSelecting = true;
+  }
+
+  public clearSelectionTarget(): void {
+    this.selectionTarget = null;
+    this.isSelecting = false;
+  }
+
+
   private pointerPos = vec2.create();
   private previousPointerPos = vec2.create();
   private _rotationVelocity = 0;
@@ -510,7 +524,9 @@ class ArcballControl {
       vec2.set(this.pointerPos, e.clientX, e.clientY);
       vec2.copy(this.previousPointerPos, this.pointerPos);
       this.isPointerDown = true;
+      this.clearSelectionTarget();
     });
+
     canvas.addEventListener('pointerup', () => {
       this.isPointerDown = false;
     });
