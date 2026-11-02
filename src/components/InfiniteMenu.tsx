@@ -1033,7 +1033,11 @@ class InfiniteGridMenu {
     let damping = 5 / timeScale;
     let cameraTargetZ = 3 * this.scaleFactor;
 
-    const isMoving = this.control.isPointerDown || Math.abs(this.smoothRotationVelocity) > 0.01;
+    const isMoving =
+      this.control.isPointerDown ||
+      this.control.isSelecting ||
+      Math.abs(this.smoothRotationVelocity) > 0.01;
+
 
     if (isMoving !== this.movementActive) {
       this.movementActive = isMoving;
@@ -1055,7 +1059,27 @@ class InfiniteGridMenu {
     this.updateCameraMatrix();
   }
 
+  /**
+   * Rotate the sphere so the disc of the given item faces the viewer.
+   * Item i is rendered by instance i (shader: vInstanceId % uItemCount).
+   */
+  public selectItem(index: number): void {
+    const itemCount = this.items.length;
+    if (!itemCount) return;
+    const itemIndex = ((Math.round(index) % itemCount) + itemCount) % itemCount;
+    const modelPos = this.instancePositions[itemIndex];
+    if (!modelPos) return;
+
+    const worldPos = vec3.normalize(
+      vec3.create(),
+      vec3.transformQuat(vec3.create(), modelPos, this.control.orientation)
+    );
+    const rotation = quat.rotationTo(quat.create(), worldPos, this.control.snapDirection);
+    this.control.setSelectionTarget(quat.multiply(quat.create(), rotation, this.control.orientation));
+  }
+
   private findNearestVertexIndex(): number {
+
     const n = this.control.snapDirection;
     const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
     const nt = vec3.transformQuat(vec3.create(), n, inversOrientation);
