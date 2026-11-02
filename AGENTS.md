@@ -1,0 +1,3 @@
+# Architecture rules
+- Keep the real product catalog, series metadata and derived homepage showcases in `src/data/products.ts`; pages consume this module so official names and parameters cannot drift between displays.
+- Keep catalog rule tests beside the data module and run them with `bun test src/data/products.test.ts`; these protect official names, series counts, specifications and parameters without testing presentation.
