@@ -7,7 +7,8 @@ import Contact from "@/components/Contact";
 import SEO from "@/components/SEO";
 import Reveal from "@/components/Reveal";
 import GradualBlur from "@/components/GradualBlur";
-import heroImage from "@/assets/hero-architecture.jpg";
+import parkAsset from "@/assets/base/base-industrial-park.jpg.asset.json";
+const heroImage = parkAsset.url;
 import giftAsset from "@/assets/products/gift-coratina-500mlx2.jpg.asset.json";
 const giftImage = giftAsset.url;
 
