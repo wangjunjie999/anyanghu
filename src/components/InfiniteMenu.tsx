@@ -496,16 +496,20 @@ class ArcballControl {
 
   public selectionTarget: quat | null = null;
   public isSelecting = false;
+  public selectionFrames = 0;
 
   public setSelectionTarget(target: quat): void {
     this.selectionTarget = quat.clone(target);
     this.isSelecting = true;
+    this.selectionFrames = 0;
   }
 
   public clearSelectionTarget(): void {
     this.selectionTarget = null;
     this.isSelecting = false;
+    this.selectionFrames = 0;
   }
+
 
 
   private pointerPos = vec2.create();
