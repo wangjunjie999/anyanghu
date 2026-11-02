@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import { Button } from "@/components/ui/button";
-import { prefersReducedMotion } from "@/hooks/use-motion";
+import { prefersReducedMotion, useInViewOnce } from "@/hooks/use-motion";
 import { cn } from "@/lib/utils";
 
 import craft01 from "@/assets/craft-01.jpg";
@@ -63,6 +63,7 @@ const About = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [dragging, setDragging] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [inViewRef, tracksShown] = useInViewOnce<HTMLDivElement>(0.1);
   const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
 
   const cardsOf = () => Array.from(trackRef.current?.children ?? []) as HTMLElement[];
@@ -204,6 +205,7 @@ const About = () => {
               <span className="text-minimal text-muted-foreground tabular-nums">{String(craftSteps.length).padStart(2, "0")}</span>
             </div>
 
+            <div ref={inViewRef}>
             <div
               ref={trackRef}
               onScroll={onTrackScroll}
@@ -218,10 +220,13 @@ const About = () => {
               aria-label="品质工艺七个步骤"
             >
               {craftSteps.map((step, i) => (
-                <Reveal
+                <div
                   key={step.title}
-                  delay={Math.min(i, 3) * 80}
-                  className="snap-start shrink-0 w-[80%] sm:w-[46%] lg:w-[31%]"
+                  style={{ transitionDelay: tracksShown ? `${Math.min(i, 4) * 80}ms` : undefined }}
+                  className={cn(
+                    "snap-start shrink-0 w-[80%] sm:w-[46%] lg:w-[31%] transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+                    tracksShown ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"
+                  )}
                 >
                   <article aria-current={activeStep === i ? "step" : undefined}>
                     <div className="aspect-[4/3] overflow-hidden bg-muted">
@@ -237,8 +242,10 @@ const About = () => {
                       <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{step.description}</p>
                     </div>
                   </article>
-                </Reveal>
+                </div>
               ))}
+            </div>
+
             </div>
 
             {/* SEO / 无障碍兜底列表 */}
