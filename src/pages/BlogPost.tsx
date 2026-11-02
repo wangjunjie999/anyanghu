@@ -3,6 +3,31 @@ import Navigation from "@/components/Navigation";
 import SEO from "@/components/SEO";
 import { blogPosts } from "@/data/blogPosts";
 
+/** Split gallery photos into rows of at most 3, so no row is left half empty. */
+const splitGalleryRows = (count: number) => {
+  const rows: number[] = [];
+  let remaining = count;
+  while (remaining > 0) {
+    let size = Math.min(3, remaining);
+    if (remaining - size === 1) size -= 1;
+    rows.push(size);
+    remaining -= size;
+  }
+  return rows;
+};
+
+const buildGalleryRows = (gallery: string[]) => {
+  const rows: { src: string; index: number }[][] = [];
+  let offset = 0;
+  for (const size of splitGalleryRows(gallery.length)) {
+    rows.push(
+      gallery.slice(offset, offset + size).map((src, i) => ({ src, index: offset + i })),
+    );
+    offset += size;
+  }
+  return rows;
+};
+
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
   const post = blogPosts.find(p => p.id === id);
@@ -125,15 +150,28 @@ const BlogPost = () => {
             </div>
             
             {post.gallery && post.gallery.length > 0 && (
-              <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {post.gallery.map((src, i) => (
-                  <div key={src} className="overflow-hidden bg-muted aspect-[4/3]">
-                    <img
-                      src={src}
-                      alt={`${post.title} 附图 ${i + 1}`}
-                      loading="lazy"
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                    />
+              <div className="mt-16 space-y-4">
+                {buildGalleryRows(post.gallery).map((row, rowIdx) => (
+                  <div
+                    key={rowIdx}
+                    className={`grid grid-cols-1 gap-4 ${
+                      row.length === 1
+                        ? "sm:grid-cols-1"
+                        : row.length === 2
+                          ? "sm:grid-cols-2"
+                          : "sm:grid-cols-3"
+                    }`}
+                  >
+                    {row.map(({ src, index }) => (
+                      <div key={src} className="overflow-hidden bg-muted aspect-[4/3]">
+                        <img
+                          src={src}
+                          alt={`${post.title} 附图 ${index + 1}`}
+                          loading="lazy"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
