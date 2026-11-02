@@ -23,6 +23,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <ScrollMotion />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/work" element={<Work />} />
