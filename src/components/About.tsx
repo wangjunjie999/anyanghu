@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import { Button } from "@/components/ui/button";
 import { prefersReducedMotion, useInViewOnce, useMediaQuery, useReducedMotion } from "@/hooks/use-motion";
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
 
