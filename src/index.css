@@ -133,20 +133,69 @@
     background: var(--gradient-overlay);
   }
   
-  /* Smooth Reveal Animation */
-  .reveal {
-    @apply opacity-0 translate-y-8;
-    animation: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* One-shot load entrance; delay via inline animation-delay */
+  .enter-up {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: enter-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-  
-  .reveal-delayed {
-    @apply opacity-0 translate-y-8;
-    animation: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-  }
-  
-  @keyframes reveal {
+
+  @keyframes enter-up {
     to {
-      @apply opacity-100 translate-y-0;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Very slow Ken Burns on hero imagery */
+  .ken-burns {
+    animation: ken-burns 20s ease-out forwards;
+    transform-origin: 50% 60%;
+  }
+
+  @keyframes ken-burns {
+    from { transform: scale(1); }
+    to { transform: scale(1.06); }
+  }
+
+  /* Scroll indicator: a thin line with a slowly flowing segment */
+  .scroll-line {
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 40%;
+    background: currentColor;
+    animation: scroll-flow 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  @keyframes scroll-flow {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(250%); }
+  }
+
+  /* Category switch fade */
+  .fade-switch {
+    animation: enter-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enter-up,
+    .fade-switch {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    .ken-burns,
+    .scroll-line::after {
+      animation: none;
+    }
+    html {
+      scroll-behavior: auto;
     }
   }
 }
