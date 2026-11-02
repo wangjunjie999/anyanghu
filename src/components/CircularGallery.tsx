@@ -29,31 +29,39 @@ function getFontSize(font: string): number {
   return match ? parseInt(match[1], 10) : 30;
 }
 
+function drawTextCanvas(canvas: HTMLCanvasElement, text: string, font: string, color: string) {
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Could not get 2d context');
+  // 按设备像素比放大绘制，避免文字在手机高清屏上发糊
+  const ratio = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
+  context.font = font;
+  const textWidth = Math.ceil(context.measureText(text).width);
+  const textHeight = Math.ceil(getFontSize(font) * 1.2);
+  const width = textWidth + 20;
+  const height = textHeight + 20;
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.font = font;
+  context.fillStyle = color;
+  context.textBaseline = 'middle';
+  context.textAlign = 'center';
+  context.clearRect(0, 0, width, height);
+  context.fillText(text, width / 2, height / 2);
+  return { width, height };
+}
+
 function createTextTexture(
   gl: GL,
   text: string,
   font: string = 'bold 30px monospace',
   color: string = 'black'
-): { texture: Texture; width: number; height: number } {
+): { texture: Texture; canvas: HTMLCanvasElement; width: number; height: number } {
   const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  if (!context) throw new Error('Could not get 2d context');
-  context.font = font;
-  const metrics = context.measureText(text);
-  const textWidth = Math.ceil(metrics.width);
-  const fontSize = getFontSize(font);
-  const textHeight = Math.ceil(fontSize * 1.2);
-  canvas.width = textWidth + 20;
-  canvas.height = textHeight + 20;
-  context.font = font;
-  context.fillStyle = color;
-  context.textBaseline = 'middle';
-  context.textAlign = 'center';
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillText(text, canvas.width / 2, canvas.height / 2);
-  const texture = new Texture(gl, { generateMipmaps: false });
+  const { width, height } = drawTextCanvas(canvas, text, font, color);
+  const texture = new Texture(gl, { generateMipmaps: true, minFilter: gl.LINEAR_MIPMAP_LINEAR });
   texture.image = canvas;
-  return { texture, width: canvas.width, height: canvas.height };
+  return { texture, canvas, width, height };
 }
 
 interface TitleProps {
@@ -84,7 +92,7 @@ class Title {
     this.createMesh();
   }
   createMesh() {
-    const { texture, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor);
+    const { texture, canvas, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor);
     const geometry = new Plane(this.gl);
     const program = new Program(this.gl, {
       vertex: `
@@ -118,6 +126,16 @@ class Title {
     this.mesh.scale.set(textWidthScaled, textHeightScaled, 1);
     this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeightScaled * 0.5 - 0.05;
     this.mesh.setParent(this.plane);
+    // 网页字体按需分批加载：字形到齐后重绘一次，避免部分文字用了替代字体而粗细不一
+    document.fonts
+      ?.load(this.font, this.text)
+      .then(() => {
+        const size = drawTextCanvas(canvas, this.text, this.font, this.textColor);
+        texture.image = canvas;
+        texture.needsUpdate = true;
+        this.mesh.scale.x = textHeightScaled * (size.width / size.height);
+      })
+      .catch(() => {});
   }
 }
 

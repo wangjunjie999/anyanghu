@@ -46,7 +46,7 @@ const Work = () => {
       <section className="pb-12">
         <div className="relative h-[380px] md:h-[600px] w-full">
           <CircularGallery items={products.map((p) => ({ image: p.image, text: p.shortName }))}
-            bend={3} textColor={`hsl(${galleryTextColor})`} borderRadius={0.05} scrollEase={0.04} font="500 22px 'Noto Serif SC', serif" />
+            bend={3} textColor={`hsl(${galleryTextColor})`} borderRadius={0.05} scrollEase={0.04} font="400 22px 'Noto Serif SC', serif" />
         </div>
       </section>
       <section className="pb-16">
