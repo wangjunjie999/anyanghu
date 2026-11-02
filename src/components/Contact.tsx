@@ -72,15 +72,31 @@ const Contact = () => {
               <div>
                 <h4 className="text-minimal text-muted-foreground mb-6">电商渠道</h4>
                 <div className="space-y-4">
-                  {["天猫旗舰店", "京东自营", "抖音商城", "微信公众号"].map((c) => (
-                    <a
-                      key={c}
-                      href="#"
-                      className="block text-xl text-foreground hover:text-primary transition-colors duration-300"
-                    >
-                      {c}
+                  {[
+                    { label: "淘宝旗舰店", href: "https://shop483968118.taobao.com/category.htm?topIds=887531943185" },
+                    { label: "抖音", href: "https://www.douyin.com/user/MS4wLjABAAAAWyhSjRn0cJtGJfAkcVPC_9Fmq79U69bkLghcjIr5hupPNdCRNEwNlBAAy5e9IsSV" },
+                  ].map((c) => (
+                    <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                      {c.label}
                     </a>
                   ))}
+                  <button type="button" onClick={copyWechatShop} className={linkClass}>
+                    微信小店
+                  </button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button type="button" className={linkClass}>微信公众号</button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-sm text-center">
+                      <DialogHeader>
+                        <DialogTitle className="text-center font-serif font-light">微信扫码关注安阳湖公众号</DialogTitle>
+                        <DialogDescription className="text-center">手机上可长按识别二维码</DialogDescription>
+                      </DialogHeader>
+                      <div className="bg-card border border-border p-3">
+                        <img src={qrWechat.url} alt="安阳湖微信公众号二维码" className="w-full aspect-square object-contain" />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </div>
 
