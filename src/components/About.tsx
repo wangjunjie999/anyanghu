@@ -119,7 +119,7 @@ const About = () => {
                 </h3>
               </div>
               <p className="text-muted-foreground text-sm md:text-base max-w-md md:text-right">
-                拖动球体探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
+                拖动球体或点击下方步骤，探索每一道工序，每一颗油橄榄从安阳湖畔到家庭餐桌的完整旅程。
               </p>
             </div>
 
@@ -141,7 +141,7 @@ const About = () => {
                 className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_center,hsl(var(--accent)/0.14),transparent_70%)]"
               />
               <div className="absolute inset-0">
-                <InfiniteMenu items={craftSteps} />
+                <InfiniteMenu items={craftSteps} activeIndex={activeStep} onActiveIndexChange={setActiveStep} />
               </div>
             </div>
 
