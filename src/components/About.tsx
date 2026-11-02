@@ -154,22 +154,45 @@ const About = () => {
               ))}
             </ol>
 
-            {/* 移动端可读流程概览 */}
+            {/* 步骤导航：点击切换球体展示的工序 */}
             <div className="mt-10 grid grid-cols-2 md:grid-cols-7 gap-3 md:gap-4">
               {craftSteps.map((step, i) => (
-                <div
+                <button
                   key={step.title}
-                  className="border-l-2 border-primary/40 pl-3 py-1"
+                  type="button"
+                  onClick={() => setActiveStep(i)}
+                  aria-current={activeStep === i ? "step" : undefined}
+                  className={cn(
+                    "group text-left border-l-2 pl-3 py-1 transition-colors duration-300",
+                    activeStep === i
+                      ? "border-primary"
+                      : "border-primary/25 hover:border-primary/60"
+                  )}
                 >
-                  <div className="text-minimal text-primary text-xs">
+                  <div
+                    className={cn(
+                      "text-minimal text-xs transition-colors duration-300",
+                      activeStep === i
+                        ? "text-primary"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
                     {String(i + 1).padStart(2, "0")}
                   </div>
-                  <div className="text-foreground text-sm md:text-base font-light mt-1">
+                  <div
+                    className={cn(
+                      "text-sm md:text-base font-light mt-1 transition-colors duration-300",
+                      activeStep === i
+                        ? "text-foreground"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
                     {step.title}
                   </div>
-                </div>
+                </button>
               ))}
             </div>
+
           </Reveal>
         </div>
       </div>
