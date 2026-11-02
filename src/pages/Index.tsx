@@ -20,6 +20,7 @@ const Index = () => {
       name: "十堰泽盟农业开发有限公司",
       alternateName: "安阳湖橄榄油",
       url: "https://anyanghu.lovable.app",
+      telephone: "+86-19971666999",
       address: {
         "@type": "PostalAddress",
         addressLocality: "十堰市郧阳区",

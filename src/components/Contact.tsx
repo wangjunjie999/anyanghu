@@ -1,6 +1,33 @@
 import qrWechat from "@/assets/qr/qr-wechat.jpg.asset.json";
 import qrXiaohongshu from "@/assets/qr/qr-xiaohongshu.jpg.asset.json";
 import qrDouyin from "@/assets/qr/qr-douyin.jpg.asset.json";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+const WECHAT_SHOP_CODE = "#微信小店://安阳湖橄榄油/OJ3UVpxohrrvCWo";
+const linkClass =
+  "block text-left text-xl text-foreground hover:text-primary transition-colors duration-300";
+
+const copyWechatShop = async () => {
+  try {
+    if (!navigator.clipboard) throw new Error("no clipboard");
+    await navigator.clipboard.writeText(WECHAT_SHOP_CODE);
+    toast.success("口令已复制，打开微信即可进入安阳湖微信小店");
+  } catch {
+    toast("请手动复制以下口令，打开微信即可进入安阳湖微信小店", {
+      description: WECHAT_SHOP_CODE,
+      duration: 15000,
+    });
+  }
+};
+
 const Contact = () => {
   return (
     <section id="contact" className="py-32 bg-background">
@@ -26,7 +53,9 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">电话</h4>
-                  <p className="text-xl text-foreground">占位 · 待补充</p>
+                  <a href="tel:+8619971666999" className="text-xl text-foreground hover:text-primary transition-colors duration-300">
+                    19971666999
+                  </a>
                 </div>
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">地址</h4>
