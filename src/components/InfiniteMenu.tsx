@@ -1114,12 +1114,26 @@ const defaultItems: MenuItem[] = [
 interface InfiniteMenuProps {
   items?: MenuItem[];
   scale?: number;
+  /** Controlled index of the item facing the viewer. */
+  activeIndex?: number | null;
+  /** Fires when the sphere lands on a different item (drag or programmatic selection). */
+  onActiveIndexChange?: (index: number) => void;
 }
 
-const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
+const InfiniteMenu: FC<InfiniteMenuProps> = ({
+  items = [],
+  scale = 1.0,
+  activeIndex,
+  onActiveIndexChange
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null) as MutableRefObject<HTMLCanvasElement | null>;
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
   const [isMoving, setIsMoving] = useState<boolean>(false);
+  const sketchRef = useRef<InfiniteGridMenu | null>(null);
+  const reportedIndexRef = useRef<number>(-1);
+  const appliedIndexRef = useRef<number>(-1);
+  const onActiveIndexChangeRef = useRef(onActiveIndexChange);
+  onActiveIndexChangeRef.current = onActiveIndexChange;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1129,6 +1143,10 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
       if (!items.length) return;
       const itemIndex = index % items.length;
       setActiveItem(items[itemIndex]);
+      if (itemIndex !== reportedIndexRef.current) {
+        reportedIndexRef.current = itemIndex;
+        onActiveIndexChangeRef.current?.(itemIndex);
+      }
     };
 
     if (canvas) {
@@ -1140,6 +1158,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
         sk => sk.run(),
         scale
       );
+      sketchRef.current = sketch;
     }
 
     const handleResize = () => {
@@ -1153,8 +1172,18 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      sketchRef.current = null;
     };
   }, [items, scale]);
+
+  // External selection (clicking a step in the list) rotates the sphere to that item.
+  useEffect(() => {
+    if (activeIndex == null) return;
+    if (activeIndex === reportedIndexRef.current || activeIndex === appliedIndexRef.current) return;
+    appliedIndexRef.current = activeIndex;
+    sketchRef.current?.selectItem(activeIndex);
+  }, [activeIndex]);
+
 
   const handleButtonClick = () => {
     if (!activeItem?.link) return;
