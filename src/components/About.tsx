@@ -214,7 +214,7 @@ const About = () => {
               onPointerUp={endDrag}
               onPointerCancel={endDrag}
               className={cn(
-                "relative -mx-6 px-6 flex gap-5 md:gap-6 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain",
+                "relative -mx-6 px-6 scroll-px-6 flex gap-5 md:gap-6 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain",
                 dragging ? "cursor-grabbing select-none snap-none" : "cursor-grab snap-x snap-mandatory"
               )}
               aria-label="品质工艺七个步骤"
