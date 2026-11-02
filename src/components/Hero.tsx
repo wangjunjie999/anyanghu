@@ -1,6 +1,5 @@
 import { useRef } from "react";
-import heroAsset from "@/assets/base/base-aerial-2.jpg.asset.json";
-const heroImage = heroAsset.url;
+import heroImage from "@/assets/hero-architecture.jpg";
 import GradualBlur from "@/components/GradualBlur";
 import VariableProximity from "@/components/VariableProximity";
 
