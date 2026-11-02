@@ -1,6 +1,33 @@
 import qrWechat from "@/assets/qr/qr-wechat.jpg.asset.json";
 import qrXiaohongshu from "@/assets/qr/qr-xiaohongshu.jpg.asset.json";
 import qrDouyin from "@/assets/qr/qr-douyin.jpg.asset.json";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+const WECHAT_SHOP_CODE = "#微信小店://安阳湖橄榄油/OJ3UVpxohrrvCWo";
+const linkClass =
+  "block text-left text-xl text-foreground hover:text-primary transition-colors duration-300";
+
+const copyWechatShop = async () => {
+  try {
+    if (!navigator.clipboard) throw new Error("no clipboard");
+    await navigator.clipboard.writeText(WECHAT_SHOP_CODE);
+    toast.success("口令已复制，打开微信即可进入安阳湖微信小店");
+  } catch {
+    toast("请手动复制以下口令，打开微信即可进入安阳湖微信小店", {
+      description: WECHAT_SHOP_CODE,
+      duration: 15000,
+    });
+  }
+};
+
 const Contact = () => {
   return (
     <section id="contact" className="py-32 bg-background">
@@ -26,7 +53,9 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">电话</h4>
-                  <p className="text-xl text-foreground">占位 · 待补充</p>
+                  <a href="tel:+8619971666999" className="text-xl text-foreground hover:text-primary transition-colors duration-300">
+                    19971666999
+                  </a>
                 </div>
                 <div>
                   <h4 className="text-minimal text-muted-foreground mb-2">地址</h4>
@@ -43,15 +72,31 @@ const Contact = () => {
               <div>
                 <h4 className="text-minimal text-muted-foreground mb-6">电商渠道</h4>
                 <div className="space-y-4">
-                  {["天猫旗舰店", "京东自营", "抖音商城", "微信公众号"].map((c) => (
-                    <a
-                      key={c}
-                      href="#"
-                      className="block text-xl text-foreground hover:text-primary transition-colors duration-300"
-                    >
-                      {c}
+                  {[
+                    { label: "淘宝旗舰店", href: "https://shop483968118.taobao.com/category.htm?topIds=887531943185" },
+                    { label: "抖音", href: "https://www.douyin.com/user/MS4wLjABAAAAWyhSjRn0cJtGJfAkcVPC_9Fmq79U69bkLghcjIr5hupPNdCRNEwNlBAAy5e9IsSV" },
+                  ].map((c) => (
+                    <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                      {c.label}
                     </a>
                   ))}
+                  <button type="button" onClick={copyWechatShop} className={linkClass}>
+                    微信小店
+                  </button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button type="button" className={linkClass}>微信公众号</button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-sm text-center">
+                      <DialogHeader>
+                        <DialogTitle className="text-center font-serif font-light">微信扫码关注安阳湖公众号</DialogTitle>
+                        <DialogDescription className="text-center">手机上可长按识别二维码</DialogDescription>
+                      </DialogHeader>
+                      <div className="bg-card border border-border p-3">
+                        <img src={qrWechat.url} alt="安阳湖微信公众号二维码" className="w-full aspect-square object-contain" />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </div>
 
